@@ -1,0 +1,9 @@
+Implementación
+Las instancias del problema se suministrarán en un fichero de texto con el siguiente
+formato: en la primera fila se encuentra el número de vértices, n; a continuación, se
+enumeran las distancias, d(i, j), entre los pares de vértices. Se asume que las distancias
+son simétricas, es decir, que d(i, j) = d(j, i), ∀i, j ∈ V. Además, d(i, i) = 0, ∀i ∈ V y
+d(i, j) = −1 si no hay una arista que conecte al vértice i con el vértice j.
+Por ejemplo, si n = 5, el fichero de texto para el grafo de la figura 1(a) contendría los
+datos mostrados en la figura 1(b) (solo la primera columna; la segunda describe qué
+representa cada dato):
