@@ -14,8 +14,9 @@
 */
 struct ElementoAdyacencia {
   unsigned nodo;
-  int coste;
- ElementoAdyacencia(unsigned nodo_param, int coste_param = 1)
+  double coste;
+  ElementoAdyacencia() = default;
+  ElementoAdyacencia(unsigned nodo_param, int coste_param = 1)
   : nodo{nodo_param}, coste{coste_param} {}
 };
 
@@ -24,9 +25,12 @@ struct Arista {
   unsigned extremo1;
   unsigned extremo2;
   int coste;
+  Arista() = default;
   Arista(unsigned arista1, unsigned arista2)
   : extremo1{arista1}, extremo2{arista2} {}
 };
+
+typedef std::vector<ElementoAdyacencia> nodo_lista;
 
 class Grafo {
  public:
@@ -35,11 +39,11 @@ class Grafo {
   ~Grafo() = default;
 
  private:
-  std::vector<ElementoAdyacencia> ListaAdyacencia_;
+  std::vector<nodo_lista> ListaAdyacencia_;
   unsigned nodos; // número de nodos
   unsigned arcos; // número de arcos
 
-  int Build(const std::string& nombre_fichero, int& error_apertura);  // devuelve 0 en caso de éxito, 1 en caso contrario
+  void Build(const std::string& fichero_string, int& error);  // devuelve 0 en caso de éxito, 1 en caso contrario
 
 };
 
