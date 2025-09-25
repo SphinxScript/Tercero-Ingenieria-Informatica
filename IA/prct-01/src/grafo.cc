@@ -22,8 +22,12 @@ void Grafo::Build(const std::string& fichero_string, int& error) {
   for (int i{0}; i < nodos - 1; ++i) {
     for (int j{i + 1}; j < nodos; ++j) {
       fichero >> costo;
+      if (costo != -1) {
       ListaAdyacencia_[i].push_back(ElementoAdyacencia(j, costo));
       ListaAdyacencia_[j].push_back(ElementoAdyacencia(i, costo));
+      }
     }
   }
+  fichero.close();
+  
 }
