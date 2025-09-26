@@ -18,25 +18,36 @@ void Grafo::Build(const std::string& fichero_string, int& error) {
   double costo;
   fichero >> nodos_;
   lista_adyacencia_.resize(nodos_);
-
+  int contador_aristas{0};
   for (int i{0}; i < nodos_ - 1; ++i) {
     for (int j{i + 1}; j < nodos_; ++j) {
       fichero >> costo;
       if (costo != -1) {
-      lista_adyacencia_[i].push_back(ElementoAdyacencia(j + 1, costo));
-      lista_adyacencia_[j].push_back(ElementoAdyacencia(i + 1, costo));
+        ++contador_aristas;
+        lista_adyacencia_[i].push_back(ElementoAdyacencia(j + 1, costo));
+        lista_adyacencia_[j].push_back(ElementoAdyacencia(i + 1, costo));
       }
     }
   }
+  arcos_ = contador_aristas;
   fichero.close();
-  
+}
+
+// Método que imprime un resumen del grafo
+void Grafo::ImprimeResumen() const {
+  std::cout << "Número de nodos del grafo: " << nodos_ << std::endl;
+  std::cout << "Número de aristas del grafo: " << arcos_ << std::endl;
+}
+
+// Método de recorrido en profundidad
+void Grafo::RecorridoProfundidad() const {
+
 }
 
 std::ostream& operator<<(std::ostream& os, const Grafo& grafo) {
   std::cout << "Lista de Adyacencia del grafo:" << std::endl;
   std::vector<nodo_lista> lista{grafo.GetLista()};
   for (int i{0}; i < lista.size(); ++i) {
-
     std::cout << "Adyacentes de " << i + 1;
     if (lista[i].size() == 0) {
       std::cout << ": []";
@@ -45,7 +56,6 @@ std::ostream& operator<<(std::ostream& os, const Grafo& grafo) {
       std::cout << ": [";
     }
     for (int j{0}; j < lista[i].size() && lista[i].size() != 0; ++j) {
-
       if (j == lista[i].size() - 1) {
         std::cout << lista[i][j].nodo << "]";
         break;

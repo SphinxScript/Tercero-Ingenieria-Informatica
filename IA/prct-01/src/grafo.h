@@ -38,10 +38,12 @@ class Grafo {
   Grafo() = default;
   Grafo(const std::string& nombre_fichero, int& error_apertura);    // Aquí inicializaré la lista de adyacencia del grafo. Llamará a build
   ~Grafo() = default;
+  void MuestraLista() const;
+  void ImprimeResumen() const;
+  void RecorridoProfundidad() const;
   
   const std::vector<nodo_lista>& GetLista() const { return lista_adyacencia_; }
 
-  void MuestraLista() const {};
  private:
   std::vector<nodo_lista> lista_adyacencia_;
   unsigned nodos_; // número de nodos
