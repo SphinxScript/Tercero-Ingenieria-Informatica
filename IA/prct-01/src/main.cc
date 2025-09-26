@@ -9,6 +9,6 @@ int main(int argc, char* argv[]) {
   }
   int codigo_error;
   Grafo objeto_grafo(nombrefichero, codigo_error);
-  
+  std::cout << objeto_grafo;
   return 0;
 }

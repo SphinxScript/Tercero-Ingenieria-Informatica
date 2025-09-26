@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 /*
   este struct se utilizará para almacenar la información de un nodo. Un elemento de la lista de adyacencia, que es lo que usaré para saber sucesores, etc.
@@ -37,14 +38,19 @@ class Grafo {
   Grafo() = default;
   Grafo(const std::string& nombre_fichero, int& error_apertura);    // Aquí inicializaré la lista de adyacencia del grafo. Llamará a build
   ~Grafo() = default;
+  
+  const std::vector<nodo_lista>& GetLista() const { return lista_adyacencia_; }
 
+  void MuestraLista() const {};
  private:
-  std::vector<nodo_lista> ListaAdyacencia_;
-  unsigned nodos; // número de nodos
-  unsigned arcos; // número de arcos
+  std::vector<nodo_lista> lista_adyacencia_;
+  unsigned nodos_; // número de nodos
+  unsigned arcos_; // número de arcos
 
   void Build(const std::string& fichero_string, int& error);  // devuelve 0 en caso de éxito, 1 en caso contrario
 
 };
+
+std::ostream& operator<<(std::ostream& os, const Grafo& grafo);
 
 #endif
