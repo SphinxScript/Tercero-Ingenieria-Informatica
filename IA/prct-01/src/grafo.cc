@@ -1,5 +1,5 @@
 #include "grafo.h"
-
+#include <queue>
 
 // Definimos el constructor
 
@@ -39,9 +39,41 @@ void Grafo::ImprimeResumen() const {
   std::cout << "Número de aristas del grafo: " << arcos_ << std::endl;
 }
 
-// Método de recorrido en profundidad
-void Grafo::RecorridoProfundidad() const {
+bool Grafo::CompruebaDestino(unsigned& nodo_destino, unsigned& nodo_actual) const {
+  return (nodo_actual == nodo_destino) ? true : false;
+}
 
+
+// Método de recorrido en profundidad
+void Grafo::RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) const {
+  Grafo grafo = *this;
+  grafo.ImprimeResumen();
+  std::cout << "Vértice origen: " << nodo_inicio << std::endl;
+  std::cout << "Vértice destino: " << nodo_final << std::endl;
+  std::vector<bool> visitados;
+  visitados.resize(nodos_, false);
+  std::vector<unsigned> prenum, postnum;
+  prenum.resize(nodos_);
+  postnum.resize(nodos_);
+  unsigned prenum_ind{0}, postnum_ind{0};
+  std::vector<nodo_lista> lista_adyac_dfs;
+  lista_adyac_dfs = lista_adyacencia_;
+  --nodo_inicio; //restamos ya que está indexado con una unidad menos.
+  Dfs(nodo_inicio, lista_adyac_dfs, visitados, prenum, prenum_ind, postnum, postnum_ind);
+}
+
+void Grafo::Dfs(unsigned& nodo_actual, std::vector<nodo_lista> lista, std::vector<bool>& visitado, std::vector<unsigned>& vector_prenum,
+                unsigned& prenum_ind, std::vector<unsigned>& vector_postnum, unsigned& postnum_ind) const {
+  std::queue<unsigned> pila_nodos;
+  for (int i{nodo_actual}; i < lista[i].size(); ++i) {
+    if (!visitado[i]) {
+      visitado[i] = true;
+      pila_nodos.emplace(lista[i][j].nodo);   //emplazamos en la cola los sucesores del nodo actual
+    }
+    for (int j{0}; j < lista[i].size(); ++j) {
+
+    }
+  }
 }
 
 std::ostream& operator<<(std::ostream& os, const Grafo& grafo) {

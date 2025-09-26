@@ -40,16 +40,19 @@ class Grafo {
   ~Grafo() = default;
   void MuestraLista() const;
   void ImprimeResumen() const;
-  void RecorridoProfundidad() const;
-  
+  void RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) const;
+
   const std::vector<nodo_lista>& GetLista() const { return lista_adyacencia_; }
 
  private:
   std::vector<nodo_lista> lista_adyacencia_;
   unsigned nodos_; // número de nodos
   unsigned arcos_; // número de arcos
+  bool CompruebaDestino(unsigned& nodo_destino, unsigned& nodo_actual) const;
 
   void Build(const std::string& fichero_string, int& error);  // devuelve 0 en caso de éxito, 1 en caso contrario
+  void Dfs(unsigned& nodo_actual, std::vector<nodo_lista> lista, std::vector<bool>& visitado, std::vector<unsigned>& vector_prenum,
+           unsigned& prenum_ind, std::vector<unsigned>& vector_postnum, unsigned& postnum_ind) const;
 
 };
 
