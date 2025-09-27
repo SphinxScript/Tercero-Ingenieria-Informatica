@@ -52,39 +52,41 @@ void Grafo::RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) co
   std::cout << "Vértice destino: " << nodo_final << std::endl;
   std::vector<bool> visitados;
   visitados.resize(nodos_, false);
-  std::vector<unsigned> prenum, postnum;
-  prenum.resize(nodos_);
-  postnum.resize(nodos_);
-  unsigned prenum_ind{0}, postnum_ind{0};
-  std::vector<nodo_lista> lista_adyac_dfs;
-  lista_adyac_dfs = lista_adyacencia_;
-  --nodo_inicio; //restamos ya que está indexado con una unidad menos.
-  Dfs(nodo_inicio, visitados);
+  std::vector<unsigned> camino, inspeccionado;
+  --nodo_inicio;
+  bool nodo_final_encontrado = false;
+  Dfs(nodo_inicio, visitados, camino, inspeccionado, nodo_final, nodo_final_encontrado);
+  std::cout << "Camino: " << std::endl;
+  for (auto& elemento : camino) {
+    std::cout << elemento << " ";
+  }
+  std::cout << std::endl;
+  for (auto& elemento : inspeccionado) {
+    std::cout << elemento << " ";
+  }
+  std::cout << std::endl;
 }
 
-void Grafo::Dfs(const unsigned& nodo_actual, std::vector<bool>& visitado) const {
+void Grafo::Dfs(const unsigned& nodo_actual, std::vector<bool>& visitado, std::vector<unsigned>& camino,
+                std::vector<unsigned>& inspeccionado, const unsigned& nodo_final, bool& nodo_final_encontrado) const {
   visitado[nodo_actual] = true;   // Aquí marcamos el nodo actual como visitado
+  camino.push_back(nodo_actual + 1);
 
-  for (int i{0}; i < lista_adyacencia_[nodo_actual].size(); ++i) {    // bucle para recorrer los vecinos del nodo
-    if (!visitado[lista_adyacencia_[nodo_actual][i].nodo]) {          // si no está visitado el vecino, se llama a Dfs con el vecino
-      Dfs(lista_adyacencia_[nodo_actual][i].nodo, visitado);
+  if (nodo_actual == (nodo_final -1)) { // hemos restado 1 al nodo_actual, asi que hacemos lo mismo con nodo final
+    inspeccionado.push_back(nodo_final);
+    nodo_final_encontrado = true;
+    return;
+  }
+  for (int i{0}; i < lista_adyacencia_[nodo_actual].size() && !nodo_final_encontrado; ++i) {    // bucle para recorrer los vecinos del nodo
+    if (!visitado[lista_adyacencia_[nodo_actual][i].nodo - 1] && !nodo_final_encontrado) {          // si no está visitado el vecino, se llama a Dfs con el vecino
+      inspeccionado.push_back(nodo_actual + 1);
+      std::cout << lista_adyacencia_[nodo_actual][i].nodo << " ";
+      Dfs(lista_adyacencia_[nodo_actual][i].nodo - 1, visitado,camino, inspeccionado, nodo_final, nodo_final_encontrado);
+      camino.pop_back();
+      std::cout << std::endl;
     }
   }
 }
-
-// void Grafo::Dfs(unsigned& nodo_actual, std::vector<nodo_lista> lista, std::vector<bool>& visitado, std::vector<unsigned>& vector_prenum,
-//                 unsigned& prenum_ind, std::vector<unsigned>& vector_postnum, unsigned& postnum_ind) const {
-//   std::queue<unsigned> pila_nodos;
-//   for (int i{nodo_actual}; i < lista[i].size(); ++i) {
-//     if (!visitado[i]) {
-//       visitado[i] = true;
-//       pila_nodos.emplace(lista[i][j].nodo);   //emplazamos en la cola los sucesores del nodo actual
-//     }
-//     for (int j{0}; j < lista[i].size(); ++j) {
-
-//     }
-//   }
-// }
 
 std::ostream& operator<<(std::ostream& os, const Grafo& grafo) {
   std::cout << "Lista de Adyacencia del grafo:" << std::endl;

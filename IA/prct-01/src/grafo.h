@@ -51,7 +51,8 @@ class Grafo {
   bool CompruebaDestino(unsigned& nodo_destino, unsigned& nodo_actual) const;
 
   void Build(const std::string& fichero_string, int& error);  // devuelve 0 en caso de éxito, 1 en caso contrario
-  void Dfs(const unsigned& nodo_actual, std::vector<bool>& visitado) const;
+  void Dfs(const unsigned& nodo_actual, std::vector<bool>& visitado, std::vector<unsigned>& camino,
+           std::vector<unsigned>& inspeccionados,const unsigned& nodo_final, bool& nodo_final_encontrado) const;
 
 };
 
