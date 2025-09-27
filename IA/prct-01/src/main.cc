@@ -9,6 +9,10 @@ int main(int argc, char* argv[]) {
   }
   int codigo_error;
   Grafo objeto_grafo(nombrefichero, codigo_error);
-  std::cout << objeto_grafo;
+ // std::cout << objeto_grafo;
+  std::cout << "Introduzca nodo de partida, y luego nodo final" << std::endl;
+  unsigned nodo_partida, nodo_final;
+  std::cin >> nodo_partida >> nodo_final;
+  objeto_grafo.RecorridoProfundidad(nodo_partida, nodo_final);
   return 0;
 }

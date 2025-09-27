@@ -59,22 +59,32 @@ void Grafo::RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) co
   std::vector<nodo_lista> lista_adyac_dfs;
   lista_adyac_dfs = lista_adyacencia_;
   --nodo_inicio; //restamos ya que está indexado con una unidad menos.
-  Dfs(nodo_inicio, lista_adyac_dfs, visitados, prenum, prenum_ind, postnum, postnum_ind);
+  Dfs(nodo_inicio, visitados);
 }
 
-void Grafo::Dfs(unsigned& nodo_actual, std::vector<nodo_lista> lista, std::vector<bool>& visitado, std::vector<unsigned>& vector_prenum,
-                unsigned& prenum_ind, std::vector<unsigned>& vector_postnum, unsigned& postnum_ind) const {
-  std::queue<unsigned> pila_nodos;
-  for (int i{nodo_actual}; i < lista[i].size(); ++i) {
-    if (!visitado[i]) {
-      visitado[i] = true;
-      pila_nodos.emplace(lista[i][j].nodo);   //emplazamos en la cola los sucesores del nodo actual
-    }
-    for (int j{0}; j < lista[i].size(); ++j) {
+void Grafo::Dfs(const unsigned& nodo_actual, std::vector<bool>& visitado) const {
+  visitado[nodo_actual] = true;   // Aquí marcamos el nodo actual como visitado
 
+  for (int i{0}; i < lista_adyacencia_[nodo_actual].size(); ++i) {    // bucle para recorrer los vecinos del nodo
+    if (!visitado[lista_adyacencia_[nodo_actual][i].nodo]) {          // si no está visitado el vecino, se llama a Dfs con el vecino
+      Dfs(lista_adyacencia_[nodo_actual][i].nodo, visitado);
     }
   }
 }
+
+// void Grafo::Dfs(unsigned& nodo_actual, std::vector<nodo_lista> lista, std::vector<bool>& visitado, std::vector<unsigned>& vector_prenum,
+//                 unsigned& prenum_ind, std::vector<unsigned>& vector_postnum, unsigned& postnum_ind) const {
+//   std::queue<unsigned> pila_nodos;
+//   for (int i{nodo_actual}; i < lista[i].size(); ++i) {
+//     if (!visitado[i]) {
+//       visitado[i] = true;
+//       pila_nodos.emplace(lista[i][j].nodo);   //emplazamos en la cola los sucesores del nodo actual
+//     }
+//     for (int j{0}; j < lista[i].size(); ++j) {
+
+//     }
+//   }
+// }
 
 std::ostream& operator<<(std::ostream& os, const Grafo& grafo) {
   std::cout << "Lista de Adyacencia del grafo:" << std::endl;
