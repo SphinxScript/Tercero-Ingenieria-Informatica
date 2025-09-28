@@ -10,10 +10,14 @@ int main(int argc, char* argv[]) {
   }
   int codigo_error;
   Grafo objeto_grafo(nombrefichero, codigo_error);
- // std::cout << objeto_grafo;
+  if (codigo_error == 1) {
+    return 1;
+  }
+  //std::cout << objeto_grafo;
   std::cout << "Introduzca nodo de partida, y luego nodo final" << std::endl;
   unsigned nodo_partida, nodo_final;
   std::cin >> nodo_partida >> nodo_final;
+  system("clear");
   objeto_grafo.RecorridoProfundidad(nodo_partida, nodo_final);
   return 0;
 }

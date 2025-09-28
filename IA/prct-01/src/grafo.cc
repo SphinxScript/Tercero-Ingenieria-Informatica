@@ -1,5 +1,5 @@
 #include "grafo.h"
-#include <queue>
+#include <stack>
 
 // Definimos el constructor
 
@@ -24,8 +24,8 @@ void Grafo::Build(const std::string& fichero_string, int& error) {
       fichero >> costo;
       if (costo != -1) {
         ++contador_aristas;
-        lista_adyacencia_[i].push_back(ElementoAdyacencia(j + 1, costo));
-        lista_adyacencia_[j].push_back(ElementoAdyacencia(i + 1, costo));
+        lista_adyacencia_[i].push_back(ElementoAdyacencia(j, costo));
+        lista_adyacencia_[j].push_back(ElementoAdyacencia(i, costo));
       }
     }
   }
@@ -35,6 +35,7 @@ void Grafo::Build(const std::string& fichero_string, int& error) {
 
 // Método que imprime un resumen del grafo
 void Grafo::ImprimeResumen() const {
+  std::cout << "--------------------------" << std::endl;
   std::cout << "Número de nodos del grafo: " << nodos_ << std::endl;
   std::cout << "Número de aristas del grafo: " << arcos_ << std::endl;
 }
@@ -50,43 +51,101 @@ void Grafo::RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) co
   grafo.ImprimeResumen();
   std::cout << "Vértice origen: " << nodo_inicio << std::endl;
   std::cout << "Vértice destino: " << nodo_final << std::endl;
-  std::vector<bool> visitados;
-  visitados.resize(nodos_, false);
-  std::vector<unsigned> camino, inspeccionado;
+//  std::vector<bool> visitados;
+//  visitados.resize(nodos_, false);
+  std::vector<unsigned> camino;
+//  --nodo_inicio;
+//  bool nodo_final_encontrado = false;
+//  std::vector<unsigned> generado;
+  std::vector<unsigned> padres;
   --nodo_inicio;
-  bool nodo_final_encontrado = false;
-  Dfs(nodo_inicio, visitados, camino, inspeccionado, nodo_final, nodo_final_encontrado);
+  --nodo_final;
+  Dfs(nodo_inicio, nodo_final, camino, padres);
   std::cout << "Camino: " << std::endl;
   for (auto& elemento : camino) {
     std::cout << elemento << " ";
   }
   std::cout << std::endl;
-  for (auto& elemento : inspeccionado) {
-    std::cout << elemento << " ";
+}
+
+void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final,
+                std::vector<unsigned>& camino, std::vector<unsigned>& padres) const {
+  std::stack<unsigned> pila_nodos;
+  pila_nodos.push(nodo_inicial);
+  std::vector<bool> visitados;
+  visitados.resize(nodos_, false);
+  bool encontrado = false;
+  int contador{0};
+  padres.resize(nodos_);
+  std::vector<unsigned> generados;
+  std::vector<unsigned> inspeccionados;
+  unsigned nodo_actual;
+  generados.push_back(nodo_inicial);
+  while (!pila_nodos.empty() && !encontrado) {
+    if (nodo_actual == nodo_final) {
+      encontrado = true;
+      std::cout << "Encontrado" << std::endl;
+      continue;
+    }
+    std::cout << "--------------------------" << std::endl;
+    std::cout << "Iteración: " << ++contador << std::endl;
+    std::cout << "Nodos generados: ";
+    PrintPila(generados);
+    nodo_actual = pila_nodos.top();
+    pila_nodos.pop();
+    visitados[nodo_actual] = true;
+    std::cout << "Debug: nodos a explorar: ";
+    int n = lista_adyacencia_[nodo_actual].size();
+    for (int i{0}; i < n; ++i) {   // Bucle for para insertar en la pila en orden inverso,y en el vector en orden creciente
+      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;
+      if (!visitados[siguiente]) {
+        pila_nodos.push(lista_adyacencia_[nodo_actual][n - 1 - i].nodo);
+        generados.push_back(siguiente);
+//        std::cout << " " << siguiente + 1;
+//        padres[siguiente] = nodo_actual;
+      }
+    }
+    std::cout << std::endl;
   }
+}
+
+void Grafo::PrintPila (const std::vector<unsigned>& vector) const {
+  if (vector.size() == 0) {
+    std::cout << "-" << std::endl;
+  }
+  else {
+    for (const unsigned& elemento : vector) {
+      std::cout << elemento + 1 << " ";
+    }
+  }
+  
   std::cout << std::endl;
 }
 
-void Grafo::Dfs(const unsigned& nodo_actual, std::vector<bool>& visitado, std::vector<unsigned>& camino,
-                std::vector<unsigned>& inspeccionado, const unsigned& nodo_final, bool& nodo_final_encontrado) const {
-  visitado[nodo_actual] = true;   // Aquí marcamos el nodo actual como visitado
-  camino.push_back(nodo_actual + 1);
 
-  if (nodo_actual == (nodo_final -1)) { // hemos restado 1 al nodo_actual, asi que hacemos lo mismo con nodo final
-    inspeccionado.push_back(nodo_final);
-    nodo_final_encontrado = true;
-    return;
-  }
-  for (int i{0}; i < lista_adyacencia_[nodo_actual].size() && !nodo_final_encontrado; ++i) {    // bucle para recorrer los vecinos del nodo
-    if (!visitado[lista_adyacencia_[nodo_actual][i].nodo - 1] && !nodo_final_encontrado) {          // si no está visitado el vecino, se llama a Dfs con el vecino
-      inspeccionado.push_back(nodo_actual + 1);
-      std::cout << lista_adyacencia_[nodo_actual][i].nodo << " ";
-      Dfs(lista_adyacencia_[nodo_actual][i].nodo - 1, visitado,camino, inspeccionado, nodo_final, nodo_final_encontrado);
-      camino.pop_back();
-      std::cout << std::endl;
-    }
-  }
-}
+
+
+// void Grafo::Dfs(const unsigned& nodo_actual, std::vector<bool>& visitado, std::vector<unsigned>& camino,
+//                 std::vector<std::vector<unsigned>>& inspeccionado, sstd::vector<std::vector<unsigned>>& generado,
+//                 const unsigned& nodo_final, bool& nodo_final_encontrado) const {
+//   visitado[nodo_actual] = true;   // Aquí marcamos el nodo actual como visitado
+//   inspeccionado.push_back(nodo_actual + 1);
+//   if (nodo_actual == (nodo_final -1)) { // hemos restado 1 al nodo_actual, asi que hacemos lo mismo con nodo final
+//     camino.push_back(nodo_final);
+//     nodo_final_encontrado = true;
+//     return;
+//   }
+//   for (int i{0}; i < lista_adyacencia_[nodo_actual].size() && !nodo_final_encontrado; ++i) {    // bucle para recorrer los visitados del nodo
+//     if (!visitado[lista_adyacencia_[nodo_actual][i].nodo - 1] && !nodo_final_encontrado) {          // si no está visitado el vecino, se llama a Dfs con el vecino
+//       camino.push_back(nodo_actual + 1);
+//       generado.push_back(nodo_actual + 1);
+//       Dfs(lista_adyacencia_[nodo_actual][i].nodo - 1, visitado,camino, inspeccionado, generado, nodo_final, nodo_final_encontrado);
+//     }
+//   }
+//   if (!nodo_final_encontrado) {
+//     camino.pop_back();
+//   }
+// }
 
 std::ostream& operator<<(std::ostream& os, const Grafo& grafo) {
   std::cout << "Lista de Adyacencia del grafo:" << std::endl;
@@ -101,10 +160,10 @@ std::ostream& operator<<(std::ostream& os, const Grafo& grafo) {
     }
     for (int j{0}; j < lista[i].size() && lista[i].size() != 0; ++j) {
       if (j == lista[i].size() - 1) {
-        std::cout << lista[i][j].nodo << "]";
+        std::cout << lista[i][j].nodo + 1 << "]";
         break;
       }
-      std::cout << lista[i][j].nodo << ", ";
+      std::cout << lista[i][j].nodo + 1 << ", ";
     }
     std::cout << std::endl;
   }
