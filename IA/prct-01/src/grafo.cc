@@ -64,16 +64,19 @@ void Grafo::RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) co
   camino.clear();
   unsigned nodo = nodo_final;
   while (true) {
-    camino.push_back(nodo + 1);
+    camino.push_back(nodo);
     if (nodo == nodo_inicio) break;
     nodo = padres[nodo];
   }
   std::reverse(camino.begin(), camino.end());
   std::cout << "Camino: ";
   for (auto n : camino) {
-    std::cout << n << " ";
+    std::cout << n + 1 << " ";
   }
   std::cout << std::endl;
+  double coste = CalculaCoste(camino);
+  std::cout << "Coste: " << coste << std::endl;
+  std::cout << "--------------------------" << std::endl;
 }
 
 void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const {
@@ -91,17 +94,19 @@ void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::v
   while (!pila_nodos.empty() && !encontrado) {
     if (nodo_actual == nodo_final) {
       encontrado = true;
-      std::cout << "Encontrado" << std::endl;
       continue;
     }
     std::cout << "--------------------------" << std::endl;
     std::cout << "Iteración: " << ++contador << std::endl;
     std::cout << "Nodos generados: ";
-    PrintPila(generados);
+    PrintVector(generados);
+    std::cout << "Nodos inspeccionados: ";
+    PrintVector(inspeccionados);
     nodo_actual = pila_nodos.top();
     pila_nodos.pop();
     visitados[nodo_actual] = true;
-    std::cout << "Debug: nodos a explorar: ";
+    inspeccionados.push_back(nodo_actual);
+//    std::cout << "Debug: nodos a explorar: ";
 //    int n = lista_adyacencia_[nodo_actual].size();
     for (int i{lista_adyacencia_[nodo_actual].size() - 1}; i >= 0; --i) {   // Bucle for para insertar en la pila en orden inverso,y en el vector en orden creciente
       unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;
@@ -122,13 +127,13 @@ void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::v
 //        padres[siguiente] = nodo_actual;
       }
     }
-    std::cout << std::endl;
   }
+  std::cout << "--------------------------" << std::endl;
 }
 
-void Grafo::PrintPila (const std::vector<unsigned>& vector) const {
+void Grafo::PrintVector (const std::vector<unsigned>& vector) const {
   if (vector.size() == 0) {
-    std::cout << "-" << std::endl;
+    std::cout << "-";
   }
   else {
     for (const unsigned& elemento : vector) {
@@ -139,7 +144,20 @@ void Grafo::PrintPila (const std::vector<unsigned>& vector) const {
   std::cout << std::endl;
 }
 
-double CalculaCoste(const std::vector<unsigned>& vector) const;
+double Grafo::CalculaCoste(const std::vector<unsigned>& camino) const {
+  double coste_total = 0.0;
+  for (int i{0}; i < camino.size(); ++i) {
+    unsigned nodo_actual = camino[i];
+    unsigned nodo_sig = camino[i + 1];
+    for (const auto& elemento : lista_adyacencia_[nodo_actual]) {
+      if (elemento.nodo == nodo_sig) {
+        coste_total += elemento.coste;
+        break;
+      }
+    }
+  }
+  return coste_total;
+}
 
 
 

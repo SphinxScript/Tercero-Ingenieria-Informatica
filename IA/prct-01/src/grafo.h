@@ -17,7 +17,7 @@ struct ElementoAdyacencia {
   unsigned nodo;
   double coste;
   ElementoAdyacencia() = default;
-  ElementoAdyacencia(unsigned nodo_param, int coste_param = 1)
+  ElementoAdyacencia(unsigned nodo_param, double coste_param)
   : nodo{nodo_param}, coste{coste_param} {}
 };
 
@@ -25,7 +25,7 @@ struct ElementoAdyacencia {
 struct Arista {
   unsigned extremo1;
   unsigned extremo2;
-  int coste;
+  double coste;
   Arista() = default;
   Arista(unsigned arista1, unsigned arista2)
   : extremo1{arista1}, extremo2{arista2} {}
@@ -52,7 +52,7 @@ class Grafo {
 
   void Build(const std::string& fichero_string, int& error);  // devuelve 0 en caso de éxito, 1 en caso contrario
   void Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const;
-  void PrintPila(const std::vector<unsigned>&) const;
+  void PrintVector(const std::vector<unsigned>&) const;
   double CalculaCoste(const std::vector<unsigned>& vector) const;
 };
 
