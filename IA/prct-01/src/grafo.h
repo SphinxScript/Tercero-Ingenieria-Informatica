@@ -53,7 +53,7 @@ class Grafo {
   void Build(const std::string& fichero_string, int& error);  // devuelve 0 en caso de éxito, 1 en caso contrario
   void Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const;
   void PrintVector(const std::vector<unsigned>&) const;
-  double CalculaCoste(const std::vector<unsigned>& vector) const;
+  double CalculaCoste(const std::vector<unsigned>& vector, const unsigned& nodo_inicial) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Grafo& grafo);

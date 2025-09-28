@@ -35,7 +35,7 @@ void Grafo::Build(const std::string& fichero_string, int& error) {
 
 // Método que imprime un resumen del grafo
 void Grafo::ImprimeResumen() const {
-  std::cout << "--------------------------" << std::endl;
+  std::cout << "---------------------------------------------" << std::endl;
   std::cout << "Número de nodos del grafo: " << nodos_ << std::endl;
   std::cout << "Número de aristas del grafo: " << arcos_ << std::endl;
 }
@@ -74,9 +74,9 @@ void Grafo::RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) co
     std::cout << n + 1 << " ";
   }
   std::cout << std::endl;
-  double coste = CalculaCoste(camino);
+  double coste = CalculaCoste(camino, nodo_inicio);
   std::cout << "Coste: " << coste << std::endl;
-  std::cout << "--------------------------" << std::endl;
+  std::cout << "---------------------------------------------" << std::endl;
 }
 
 void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const {
@@ -94,9 +94,15 @@ void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::v
   while (!pila_nodos.empty() && !encontrado) {
     if (nodo_actual == nodo_final) {
       encontrado = true;
+      std::cout << "---------------------------------------------" << std::endl;
+      std::cout << "Iteración: " << ++contador << std::endl;
+      std::cout << "Nodos generados: ";
+      PrintVector(generados);
+      std::cout << "Nodos inspeccionados: ";
+      PrintVector(inspeccionados);
       continue;
     }
-    std::cout << "--------------------------" << std::endl;
+    std::cout << "---------------------------------------------" << std::endl;
     std::cout << "Iteración: " << ++contador << std::endl;
     std::cout << "Nodos generados: ";
     PrintVector(generados);
@@ -128,7 +134,7 @@ void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::v
       }
     }
   }
-  std::cout << "--------------------------" << std::endl;
+  std::cout << "---------------------------------------------" << std::endl;
 }
 
 void Grafo::PrintVector (const std::vector<unsigned>& vector) const {
@@ -144,13 +150,13 @@ void Grafo::PrintVector (const std::vector<unsigned>& vector) const {
   std::cout << std::endl;
 }
 
-double Grafo::CalculaCoste(const std::vector<unsigned>& camino) const {
+double Grafo::CalculaCoste(const std::vector<unsigned>& camino, const unsigned& nodo_inicial) const {
   double coste_total = 0.0;
   for (int i{0}; i < camino.size(); ++i) {
     unsigned nodo_actual = camino[i];
     unsigned nodo_sig = camino[i + 1];
     for (const auto& elemento : lista_adyacencia_[nodo_actual]) {
-      if (elemento.nodo == nodo_sig) {
+      if (elemento.nodo == nodo_sig && nodo_sig != nodo_inicial) {
         coste_total += elemento.coste;
         break;
       }
