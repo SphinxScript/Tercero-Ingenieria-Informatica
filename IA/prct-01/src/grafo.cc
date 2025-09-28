@@ -1,6 +1,6 @@
 #include "grafo.h"
 #include <stack>
-
+#include <algorithm>
 // Definimos el constructor
 
 Grafo::Grafo(const std::string& nombre_fichero, int& error_apertura) {
@@ -60,16 +60,23 @@ void Grafo::RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) co
   std::vector<unsigned> padres;
   --nodo_inicio;
   --nodo_final;
-  Dfs(nodo_inicio, nodo_final, camino, padres);
-  std::cout << "Camino: " << std::endl;
-  for (auto& elemento : camino) {
-    std::cout << elemento << " ";
+  Dfs(nodo_inicio, nodo_final, padres);
+  camino.clear();
+  unsigned nodo = nodo_final;
+  while (true) {
+    camino.push_back(nodo + 1);
+    if (nodo == nodo_inicio) break;
+    nodo = padres[nodo];
+  }
+  std::reverse(camino.begin(), camino.end());
+  std::cout << "Camino: ";
+  for (auto n : camino) {
+    std::cout << n << " ";
   }
   std::cout << std::endl;
 }
 
-void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final,
-                std::vector<unsigned>& camino, std::vector<unsigned>& padres) const {
+void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const {
   std::stack<unsigned> pila_nodos;
   pila_nodos.push(nodo_inicial);
   std::vector<bool> visitados;
@@ -95,12 +102,22 @@ void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final,
     pila_nodos.pop();
     visitados[nodo_actual] = true;
     std::cout << "Debug: nodos a explorar: ";
-    int n = lista_adyacencia_[nodo_actual].size();
-    for (int i{0}; i < n; ++i) {   // Bucle for para insertar en la pila en orden inverso,y en el vector en orden creciente
+//    int n = lista_adyacencia_[nodo_actual].size();
+    for (int i{lista_adyacencia_[nodo_actual].size() - 1}; i >= 0; --i) {   // Bucle for para insertar en la pila en orden inverso,y en el vector en orden creciente
       unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;
       if (!visitados[siguiente]) {
-        pila_nodos.push(lista_adyacencia_[nodo_actual][n - 1 - i].nodo);
-        generados.push_back(siguiente);
+        pila_nodos.push(lista_adyacencia_[nodo_actual][i].nodo);
+        padres[siguiente] = nodo_actual;    // el padre del siguiente es el que estoy ahora
+        //generados.push_back(siguiente);
+        //std::cout << " " << siguiente + 1;
+        //padres[siguiente] = nodo_actual;
+      }
+    }
+    for (int i{0}; i < lista_adyacencia_[nodo_actual].size(); ++i) {   // Bucle for para insertar en la pila en orden inverso,y en el vector en orden creciente
+      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;
+      if (!visitados[siguiente]) {
+        generados.push_back(lista_adyacencia_[nodo_actual][i].nodo);
+//        generados.push_back(siguiente);
 //        std::cout << " " << siguiente + 1;
 //        padres[siguiente] = nodo_actual;
       }
@@ -122,30 +139,9 @@ void Grafo::PrintPila (const std::vector<unsigned>& vector) const {
   std::cout << std::endl;
 }
 
+double CalculaCoste(const std::vector<unsigned>& vector) const;
 
 
-
-// void Grafo::Dfs(const unsigned& nodo_actual, std::vector<bool>& visitado, std::vector<unsigned>& camino,
-//                 std::vector<std::vector<unsigned>>& inspeccionado, sstd::vector<std::vector<unsigned>>& generado,
-//                 const unsigned& nodo_final, bool& nodo_final_encontrado) const {
-//   visitado[nodo_actual] = true;   // Aquí marcamos el nodo actual como visitado
-//   inspeccionado.push_back(nodo_actual + 1);
-//   if (nodo_actual == (nodo_final -1)) { // hemos restado 1 al nodo_actual, asi que hacemos lo mismo con nodo final
-//     camino.push_back(nodo_final);
-//     nodo_final_encontrado = true;
-//     return;
-//   }
-//   for (int i{0}; i < lista_adyacencia_[nodo_actual].size() && !nodo_final_encontrado; ++i) {    // bucle para recorrer los visitados del nodo
-//     if (!visitado[lista_adyacencia_[nodo_actual][i].nodo - 1] && !nodo_final_encontrado) {          // si no está visitado el vecino, se llama a Dfs con el vecino
-//       camino.push_back(nodo_actual + 1);
-//       generado.push_back(nodo_actual + 1);
-//       Dfs(lista_adyacencia_[nodo_actual][i].nodo - 1, visitado,camino, inspeccionado, generado, nodo_final, nodo_final_encontrado);
-//     }
-//   }
-//   if (!nodo_final_encontrado) {
-//     camino.pop_back();
-//   }
-// }
 
 std::ostream& operator<<(std::ostream& os, const Grafo& grafo) {
   std::cout << "Lista de Adyacencia del grafo:" << std::endl;

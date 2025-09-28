@@ -51,9 +51,9 @@ class Grafo {
   bool CompruebaDestino(unsigned& nodo_destino, unsigned& nodo_actual) const;
 
   void Build(const std::string& fichero_string, int& error);  // devuelve 0 en caso de éxito, 1 en caso contrario
-  void Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final,
-           std::vector<unsigned>& camino, std::vector<unsigned>& padres) const;
+  void Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const;
   void PrintPila(const std::vector<unsigned>&) const;
+  double CalculaCoste(const std::vector<unsigned>& vector) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Grafo& grafo);
