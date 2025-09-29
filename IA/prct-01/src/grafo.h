@@ -21,15 +21,6 @@ struct ElementoAdyacencia {
   : nodo{nodo_param}, coste{coste_param} {}
 };
 
-// struct que se utilizará para almacenar la información de una arista. ambos extremos y coste.
-struct Arista {
-  unsigned extremo1;
-  unsigned extremo2;
-  double coste;
-  Arista() = default;
-  Arista(unsigned arista1, unsigned arista2)
-  : extremo1{arista1}, extremo2{arista2} {}
-};
 
 typedef std::vector<ElementoAdyacencia> nodo_lista;
 
