@@ -83,7 +83,7 @@ void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::v
   padres.resize(nodos_);            // vector de padres
   std::vector<unsigned> generados;  // vector de nodos generados
   std::vector<unsigned> inspeccionados;  // vector de nodos inspeccionados
-  unsigned nodo_actual;             // nodo actual
+  unsigned nodo_actual{__UINT8_MAX__};             // nodo actual
   generados.push_back(nodo_inicial);
   while (!pila_nodos.empty() && !encontrado) {    // bucle while para recorrer la pila de nodos
     if (nodo_actual == nodo_final) {               // si se ha encontrado el nodo final
@@ -110,7 +110,7 @@ void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::v
       unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;    // extraemos el siguiente nodo al actual
       if (!visitados[siguiente]) {                                   // si el siguiente nodo no ha sido visitado
         pila_nodos.push(lista_adyacencia_[nodo_actual][i].nodo);     // se agrega el siguiente nodo a la pila
-        padres[siguiente] = nodo_actual;    // marcamos en el vector de padres que padre del siguiente es el actual
+        padres[siguiente] = nodo_actual;                             // marcamos en el vector de padres que padre del siguiente es el actual
       }
     }
     for (int i{0}; i < lista_adyacencia_[nodo_actual].size(); ++i) {   // Este bucle recorre los sucesores del nodo actual en orden creciente, para ponerlos en el vector generados
@@ -158,7 +158,7 @@ void Grafo::Bfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::v
   padres.resize(nodos_);            // vector de padres
   std::vector<unsigned> generados;  // vector de nodos generados
   std::vector<unsigned> inspeccionados;  // vector de nodos inspeccionados
-  unsigned nodo_actual;             // nodo actual
+  unsigned nodo_actual{__UINT8_MAX__};             // nodo actual
   generados.push_back(nodo_inicial);
   while (!cola_nodos.empty() && !encontrado) {    // bucle
     if (nodo_actual == nodo_final) {
