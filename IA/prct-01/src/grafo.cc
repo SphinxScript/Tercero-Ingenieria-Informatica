@@ -1,12 +1,16 @@
-#include "grafo.h"
 #include <stack>
 #include <algorithm>
-// Definimos el constructor
+#include <queue>
 
+#include "grafo.h"
+
+
+// Definimos el constructor
 Grafo::Grafo(const std::string& nombre_fichero, int& error_apertura) {
   Build(nombre_fichero, error_apertura);
 }
 
+// Método que construye el grafo a partir de un fichero
 void Grafo::Build(const std::string& fichero_string, int& error) {
   std::ifstream fichero{fichero_string};
   if (!fichero.is_open()) {
@@ -63,10 +67,7 @@ void Grafo::RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) co
   }   // El bucle va desde el nodo final hasta el nodo inicial, recorriendo el vector padres. Cuando el nodo del camino es el nodo_inicial es que hemos llegao.
   std::reverse(camino.begin(), camino.end());   // se invertimos el vector camino, ya que va desde el nodo final al nodo iniical.
   std::cout << "Camino: ";                      // imprimimos el camino
-  for (auto n : camino) {                      // recorremos el vector camino
-    std::cout << n + 1 << " ";                 // imprimimos el nodo del camino
-  }
-  std::cout << std::endl;
+  PrintVector(camino);
   double coste = CalculaCoste(camino, nodo_inicio);   // Llamamos a la funcion calculacoste que calcula el coste de un vector de nodos hasta un nodo inicial.
   std::cout << "Coste: " << coste << std::endl;
   std::cout << "---------------------------------------------" << std::endl;
@@ -120,6 +121,80 @@ void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::v
     }
   }
   std::cout << "---------------------------------------------" << std::endl;
+}
+
+
+void Grafo::RecorridoAmplitud(unsigned& nodo_inicio, unsigned& nodo_final) const {
+  Grafo grafo = *this;
+  grafo.ImprimeResumen();
+  std::cout << "Vértice origen: " << nodo_inicio << std::endl;
+  std::cout << "Vértice destino: " << nodo_final << std::endl;
+  --nodo_inicio;
+  --nodo_final;
+  std::vector<unsigned> padres;
+  Bfs(nodo_inicio, nodo_final, padres);
+  std::vector<unsigned> camino;   // Vector de nodos del camino
+  unsigned nodo_camino = nodo_final;
+  while (true) {
+    camino.push_back(nodo_camino);  // metemos en el camino el nodo del camino en cada momento
+    if (nodo_camino == nodo_inicio) break;  // en caso de que el nodo actual sea el inicial, hemos recorrido el camino de padres hasta el inicio
+    nodo_camino = padres[nodo_camino];
+  }
+  std::reverse(camino.begin(), camino.end());
+  std::cout << "---------------------------------------------" << std::endl;
+  std::cout << "Camino: ";
+  PrintVector(camino);
+  double coste{CalculaCoste(camino, nodo_inicio)};
+  std::cout << "Coste: " << coste << std::endl;
+}
+
+void Grafo::Bfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const {
+  std::queue<unsigned> cola_nodos;  // Creamos la cola de nodos a explorar
+  cola_nodos.push(nodo_inicial);    // nodo inicial
+  std::vector<bool> visitados;      // vector de bool para marcar los nodos visitados
+  visitados.resize(nodos_, false);  // inicializamos el vector de bool
+  bool encontrado = false;          // variable para saber si se ha encontrado el nodo final
+  int contador{0};                  // contador de iteraciones
+  padres.resize(nodos_);            // vector de padres
+  std::vector<unsigned> generados;  // vector de nodos generados
+  std::vector<unsigned> inspeccionados;  // vector de nodos inspeccionados
+  unsigned nodo_actual;             // nodo actual
+  generados.push_back(nodo_inicial);
+  while (!cola_nodos.empty() && !encontrado) {    // bucle
+    if (nodo_actual == nodo_final) {
+      encontrado = true;                           // se marca que se ha encontrado el nodo final y se imprime generados e inspeccionados y se sigue con el bucle
+      std::cout << "---------------------------------------------" << std::endl; 
+      std::cout << "Iteración: " << ++contador << std::endl;  
+      std::cout << "Nodos generados: ";
+      PrintVector(generados);
+      std::cout << "Nodos inspeccionados: ";
+      PrintVector(inspeccionados);
+      continue;
+    }
+    std::cout << "---------------------------------------------" << std::endl;  // Imprimimos las iteraciones con vector de generados e inspeccionados
+    std::cout << "Iteración: " << ++contador << std::endl;
+    std::cout << "Nodos generados: ";
+    PrintVector(generados);
+    std::cout << "Nodos inspeccionados: ";
+    PrintVector(inspeccionados);
+    nodo_actual = cola_nodos.front();  // se saca el primer nodo de la cola
+    cola_nodos.pop();                // se saca el primer nodo de la cola
+    visitados[nodo_actual] = true;   // se marca el nodo como visitado en el vector de bool visitados
+    inspeccionados.push_back(nodo_actual);  // se agrega el nodo a inspeccionados (es el nodo a inspeccionar)
+    for (int i{lista_adyacencia_[nodo_actual].size() - 1}; i >= 0; --i) {   // Bucle for para insertar en la cola los sucesores del nodo actual en orden inverso
+      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;    // extraemos el siguiente nodo al actual
+      if (!visitados[siguiente]) {                                   // si el siguiente nodo no ha sido visitado
+        cola_nodos.push(lista_adyacencia_[nodo_actual][i].nodo);     // se agrega el siguiente nodo a la cola
+        padres[siguiente] = nodo_actual;    // marcamos en el vector de padres que padre del siguiente es el actual
+      }
+    }
+    for (int i{0}; i < lista_adyacencia_[nodo_actual].size(); ++i) {   // Este bucle recorre los sucesores del nodo actual en orden creciente, para ponerlos en el vector generados
+      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;    // extraemos el siguiente nodo al actual
+      if (!visitados[siguiente]) {                                   // si el siguiente nodo no ha sido visitado
+        generados.push_back(lista_adyacencia_[nodo_actual][i].nodo);  // se agrega el siguiente nodo a la cola
+      }
+    }
+  }
 }
 
 void Grafo::PrintVector (const std::vector<unsigned>& vector) const {

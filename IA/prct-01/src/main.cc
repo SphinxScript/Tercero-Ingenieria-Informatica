@@ -22,15 +22,23 @@ int main(int argc, char* argv[]) {
   unsigned nodo_partida, nodo_final;
   std::cin >> nodo_partida >> nodo_final;
   system("clear");
+  std::streambuf* cout_buf = std::cout.rdbuf();   // guardamos el buffer original de cout
+  std::ofstream fichero_salida{"salida.txt"};
+  std::cout.rdbuf(fichero_salida.rdbuf());         // redirigimos cout al fichero
   if (opcion == 1) {
+    std::cout << "Recorrido en profundidad" << std::endl;
     objeto_grafo.RecorridoProfundidad(nodo_partida, nodo_final);
   }
   else if (opcion == 2) {
-  //  objeto_grafo.RecorridoBreadthFirst(nodo_partida, nodo_final);
+    std::cout << "Recorrido en amplitud" << std::endl;
+    objeto_grafo.RecorridoAmplitud(nodo_partida, nodo_final);
   }
   else {
     std::cerr << "Opción no válida" << std::endl;
     return 1;
   }
+  std::cout.rdbuf(cout_buf);                       // restauramos el buffer original de cout
+  fichero_salida.close();                          // cerramos el fichero
+  std::cout << "Ejecución finalizada. Resultados en 'salida.txt'" << std::endl;
   return 0;
 }

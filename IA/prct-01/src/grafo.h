@@ -32,6 +32,7 @@ class Grafo {
   void MuestraLista() const;
   void ImprimeResumen() const;
   void RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) const;
+  void RecorridoAmplitud(unsigned& nodo_inicio, unsigned& nodo_final) const;
 
   const std::vector<nodo_lista>& GetLista() const { return lista_adyacencia_; }
 
@@ -43,6 +44,7 @@ class Grafo {
 
   void Build(const std::string& fichero_string, int& error);  // devuelve 0 en caso de éxito, 1 en caso contrario
   void Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const;
+  void Bfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const;
   void PrintVector(const std::vector<unsigned>&) const;
   double CalculaCoste(const std::vector<unsigned>& vector, const unsigned& nodo_inicial) const;
 };
