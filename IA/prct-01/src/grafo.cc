@@ -14,7 +14,6 @@ void Grafo::Build(const std::string& fichero_string, int& error) {
     error = 1;
     return;
   }
-  unsigned antecesor, predecesor;
   double costo;
   fichero >> nodos_;
   lista_adyacencia_.resize(nodos_);
@@ -36,7 +35,7 @@ void Grafo::Build(const std::string& fichero_string, int& error) {
 // Método que imprime un resumen del grafo
 void Grafo::ImprimeResumen() const {
   std::cout << "---------------------------------------------" << std::endl;
-  std::cout << "Número de nodos del grafo: " << nodos_ << std::endl;
+  std::cout << "Número de nodos del grafo: " << nodos_ << std::endl; 
   std::cout << "Número de aristas del grafo: " << arcos_ << std::endl;
 }
 
@@ -51,86 +50,72 @@ void Grafo::RecorridoProfundidad(unsigned& nodo_inicio, unsigned& nodo_final) co
   grafo.ImprimeResumen();
   std::cout << "Vértice origen: " << nodo_inicio << std::endl;
   std::cout << "Vértice destino: " << nodo_final << std::endl;
-//  std::vector<bool> visitados;
-//  visitados.resize(nodos_, false);
-  std::vector<unsigned> camino;
-//  --nodo_inicio;
-//  bool nodo_final_encontrado = false;
-//  std::vector<unsigned> generado;
   std::vector<unsigned> padres;
   --nodo_inicio;
   --nodo_final;
   Dfs(nodo_inicio, nodo_final, padres);
-  camino.clear();
-  unsigned nodo = nodo_final;
-  while (true) {
-    camino.push_back(nodo);
-    if (nodo == nodo_inicio) break;
-    nodo = padres[nodo];
-  }
-  std::reverse(camino.begin(), camino.end());
-  std::cout << "Camino: ";
-  for (auto n : camino) {
-    std::cout << n + 1 << " ";
+  std::vector<unsigned> camino;  // vector de nodos del camino
+  unsigned nodo_camino = nodo_final;
+  while (true) {                        // bucle while para recrear el camino con el vector padres
+    camino.push_back(nodo_camino);      // se agrega el nodo al vector camino
+    if (nodo_camino == nodo_inicio) break; // si se ha llegado al nodo inicial, se sale del bucle
+    nodo_camino = padres[nodo_camino];     // ahora seguimos el bucle con el nodo padre del actual
+  }   // El bucle va desde el nodo final hasta el nodo inicial, recorriendo el vector padres. Cuando el nodo del camino es el nodo_inicial es que hemos llegao.
+  std::reverse(camino.begin(), camino.end());   // se invertimos el vector camino, ya que va desde el nodo final al nodo iniical.
+  std::cout << "Camino: ";                      // imprimimos el camino
+  for (auto n : camino) {                      // recorremos el vector camino
+    std::cout << n + 1 << " ";                 // imprimimos el nodo del camino
   }
   std::cout << std::endl;
-  double coste = CalculaCoste(camino, nodo_inicio);
+  double coste = CalculaCoste(camino, nodo_inicio);   // Llamamos a la funcion calculacoste que calcula el coste de un vector de nodos hasta un nodo inicial.
   std::cout << "Coste: " << coste << std::endl;
   std::cout << "---------------------------------------------" << std::endl;
 }
 
 void Grafo::Dfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const {
-  std::stack<unsigned> pila_nodos;
-  pila_nodos.push(nodo_inicial);
-  std::vector<bool> visitados;
-  visitados.resize(nodos_, false);
-  bool encontrado = false;
-  int contador{0};
-  padres.resize(nodos_);
-  std::vector<unsigned> generados;
-  std::vector<unsigned> inspeccionados;
-  unsigned nodo_actual;
+  std::stack<unsigned> pila_nodos;  // pila de nodos a explorar
+  pila_nodos.push(nodo_inicial);    // nodo inicial
+  std::vector<bool> visitados;      // vector de bool para marcar los nodos visitados
+  visitados.resize(nodos_, false);  // inicializamos el vector de bool
+  bool encontrado = false;          // variable para saber si se ha encontrado el nodo final
+  int contador{0};                  // contador de iteraciones
+  padres.resize(nodos_);            // vector de padres
+  std::vector<unsigned> generados;  // vector de nodos generados
+  std::vector<unsigned> inspeccionados;  // vector de nodos inspeccionados
+  unsigned nodo_actual;             // nodo actual
   generados.push_back(nodo_inicial);
-  while (!pila_nodos.empty() && !encontrado) {
-    if (nodo_actual == nodo_final) {
-      encontrado = true;
-      std::cout << "---------------------------------------------" << std::endl;
-      std::cout << "Iteración: " << ++contador << std::endl;
+  while (!pila_nodos.empty() && !encontrado) {    // bucle while para recorrer la pila de nodos
+    if (nodo_actual == nodo_final) {               // si se ha encontrado el nodo final
+      encontrado = true;                           // se marca que se ha encontrado el nodo final y se imprime generados e inspeccionados y se sigue con el bucle
+      std::cout << "---------------------------------------------" << std::endl; 
+      std::cout << "Iteración: " << ++contador << std::endl;  
       std::cout << "Nodos generados: ";
       PrintVector(generados);
       std::cout << "Nodos inspeccionados: ";
       PrintVector(inspeccionados);
       continue;
     }
-    std::cout << "---------------------------------------------" << std::endl;
+    std::cout << "---------------------------------------------" << std::endl;  // Imprimimos las iteraciones con vector de generados e inspeccionados
     std::cout << "Iteración: " << ++contador << std::endl;
     std::cout << "Nodos generados: ";
     PrintVector(generados);
     std::cout << "Nodos inspeccionados: ";
     PrintVector(inspeccionados);
-    nodo_actual = pila_nodos.top();
-    pila_nodos.pop();
-    visitados[nodo_actual] = true;
-    inspeccionados.push_back(nodo_actual);
-//    std::cout << "Debug: nodos a explorar: ";
-//    int n = lista_adyacencia_[nodo_actual].size();
-    for (int i{lista_adyacencia_[nodo_actual].size() - 1}; i >= 0; --i) {   // Bucle for para insertar en la pila en orden inverso,y en el vector en orden creciente
-      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;
-      if (!visitados[siguiente]) {
-        pila_nodos.push(lista_adyacencia_[nodo_actual][i].nodo);
-        padres[siguiente] = nodo_actual;    // el padre del siguiente es el que estoy ahora
-        //generados.push_back(siguiente);
-        //std::cout << " " << siguiente + 1;
-        //padres[siguiente] = nodo_actual;
+    nodo_actual = pila_nodos.top();  // se saca el primer nodo de la pila
+    pila_nodos.pop();                // se saca el primer nodo de la pila
+    visitados[nodo_actual] = true;   // se marca el nodo como visitado en el vector de bool visitados
+    inspeccionados.push_back(nodo_actual);  // se agrega el nodo a inspeccionados (es el nodo a inspeccionar)
+    for (int i{lista_adyacencia_[nodo_actual].size() - 1}; i >= 0; --i) {   // Bucle for para insertar en la pila los sucesores del nodo actual en orden inverso
+      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;    // extraemos el siguiente nodo al actual
+      if (!visitados[siguiente]) {                                   // si el siguiente nodo no ha sido visitado
+        pila_nodos.push(lista_adyacencia_[nodo_actual][i].nodo);     // se agrega el siguiente nodo a la pila
+        padres[siguiente] = nodo_actual;    // marcamos en el vector de padres que padre del siguiente es el actual
       }
     }
-    for (int i{0}; i < lista_adyacencia_[nodo_actual].size(); ++i) {   // Bucle for para insertar en la pila en orden inverso,y en el vector en orden creciente
-      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;
-      if (!visitados[siguiente]) {
-        generados.push_back(lista_adyacencia_[nodo_actual][i].nodo);
-//        generados.push_back(siguiente);
-//        std::cout << " " << siguiente + 1;
-//        padres[siguiente] = nodo_actual;
+    for (int i{0}; i < lista_adyacencia_[nodo_actual].size(); ++i) {   // Este bucle recorre los sucesores del nodo actual en orden creciente, para ponerlos en el vector generados
+      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;    // extraemos el siguiente nodo al actual
+      if (!visitados[siguiente]) {                                   // si el siguiente nodo no ha sido visitado
+        generados.push_back(lista_adyacencia_[nodo_actual][i].nodo);  // se agrega el siguiente nodo a la pila
       }
     }
   }
@@ -150,14 +135,15 @@ void Grafo::PrintVector (const std::vector<unsigned>& vector) const {
   std::cout << std::endl;
 }
 
+// Método que calcula el coste de un vector de nodos hasta un nodo inicial
 double Grafo::CalculaCoste(const std::vector<unsigned>& camino, const unsigned& nodo_inicial) const {
   double coste_total = 0.0;
-  for (int i{0}; i < camino.size(); ++i) {
-    unsigned nodo_actual = camino[i];
-    unsigned nodo_sig = camino[i + 1];
-    for (const auto& elemento : lista_adyacencia_[nodo_actual]) {
-      if (elemento.nodo == nodo_sig && nodo_sig != nodo_inicial) {
-        coste_total += elemento.coste;
+  for (int i{0}; i < camino.size(); ++i) {    // recorremos el vector de nodos pasado
+    unsigned nodo_actual = camino[i];         // extraemos el nodo actual
+    unsigned nodo_sig = camino[i + 1];        // extraemos el siguiente nodo
+    for (const auto& elemento : lista_adyacencia_[nodo_actual]) {  // recorremos la lista de adyacencia del nodo actual
+      if (elemento.nodo == nodo_sig && nodo_sig != nodo_inicial) {  // si el siguiente nodo es el siguiente en nuestro vector (está en el camino)
+        coste_total += elemento.coste;        // y es distinto al nodo inicial (Para evitar sumar el coste en caso de ser un bucle) se suma el coste y dejamos de recorrer los sucesores
         break;
       }
     }
