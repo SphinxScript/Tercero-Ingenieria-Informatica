@@ -149,49 +149,34 @@ void Grafo::RecorridoAmplitud(unsigned& nodo_inicio, unsigned& nodo_final) const
 }
 
 void Grafo::Bfs(const unsigned& nodo_inicial, const unsigned& nodo_final, std::vector<unsigned>& padres) const {
-  std::queue<unsigned> cola_nodos;  // Creamos la cola de nodos a explorar
-  cola_nodos.push(nodo_inicial);    // nodo inicial
-  std::vector<bool> visitados;      // vector de bool para marcar los nodos visitados
-  visitados.resize(nodos_, false);  // inicializamos el vector de bool
-  bool encontrado = false;          // variable para saber si se ha encontrado el nodo final
-  int contador{0};                  // contador de iteraciones
-  padres.resize(nodos_);            // vector de padres
-  std::vector<unsigned> generados;  // vector de nodos generados
-  std::vector<unsigned> inspeccionados;  // vector de nodos inspeccionados
-  unsigned nodo_actual{__UINT8_MAX__};             // nodo actual
+  std::queue<unsigned> cola_nodos;
+  cola_nodos.push(nodo_inicial);
+  std::vector<bool> visitados(nodos_, false);
+  visitados[nodo_inicial] = true;  // importante
+  padres.resize(nodos_);
+  std::vector<unsigned> generados;
+  std::vector<unsigned> inspeccionados;
   generados.push_back(nodo_inicial);
-  while (!cola_nodos.empty() && !encontrado) {    // bucle
-    if (nodo_actual == nodo_final) {
-      encontrado = true;                           // se marca que se ha encontrado el nodo final y se imprime generados e inspeccionados y se sigue con el bucle
-      std::cout << "---------------------------------------------" << std::endl; 
-      std::cout << "Iteración: " << ++contador << std::endl;  
-      std::cout << "Nodos generados: ";
-      PrintVector(generados);
-      std::cout << "Nodos inspeccionados: ";
-      PrintVector(inspeccionados);
-      continue;
-    }
-    std::cout << "---------------------------------------------" << std::endl;  // Imprimimos las iteraciones con vector de generados e inspeccionados
+  int contador = 0;
+  while (!cola_nodos.empty()) {
+    unsigned nodo_actual = cola_nodos.front();
+    cola_nodos.pop();
+    inspeccionados.push_back(nodo_actual);
+    // imprimir estado en cada iteración
+    std::cout << "---------------------------------------------" << std::endl;
     std::cout << "Iteración: " << ++contador << std::endl;
     std::cout << "Nodos generados: ";
     PrintVector(generados);
     std::cout << "Nodos inspeccionados: ";
     PrintVector(inspeccionados);
-    nodo_actual = cola_nodos.front();  // se saca el primer nodo de la cola
-    cola_nodos.pop();                // se saca el primer nodo de la cola
-    visitados[nodo_actual] = true;   // se marca el nodo como visitado en el vector de bool visitados
-    inspeccionados.push_back(nodo_actual);  // se agrega el nodo a inspeccionados (es el nodo a inspeccionar)
-    for (int i{lista_adyacencia_[nodo_actual].size() - 1}; i >= 0; --i) {   // Bucle for para insertar en la cola los sucesores del nodo actual en orden inverso
-      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;    // extraemos el siguiente nodo al actual
-      if (!visitados[siguiente]) {                                   // si el siguiente nodo no ha sido visitado
-        cola_nodos.push(lista_adyacencia_[nodo_actual][i].nodo);     // se agrega el siguiente nodo a la cola
-        padres[siguiente] = nodo_actual;    // marcamos en el vector de padres que padre del siguiente es el actual
-      }
-    }
-    for (int i{0}; i < lista_adyacencia_[nodo_actual].size(); ++i) {   // Este bucle recorre los sucesores del nodo actual en orden creciente, para ponerlos en el vector generados
-      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;    // extraemos el siguiente nodo al actual
-      if (!visitados[siguiente]) {                                   // si el siguiente nodo no ha sido visitado
-        generados.push_back(lista_adyacencia_[nodo_actual][i].nodo);  // se agrega el siguiente nodo a la cola
+    if (nodo_actual == nodo_final) break;  // si se ha encontrado el nodo final, se sale del bucle
+    for (unsigned i = 0; i < lista_adyacencia_[nodo_actual].size(); ++i) {  // recorremos los sucesores del nodo actual
+      unsigned siguiente = lista_adyacencia_[nodo_actual][i].nodo;          // extraemos el siguiente nodo
+      if (!visitados[siguiente]) {                                 // si no ha sido visitado
+        cola_nodos.push(siguiente);       // se agrega a la cola
+        visitados[siguiente] = true;       // se marca como visitado el nodo siguiente
+        padres[siguiente] = nodo_actual;   // se marca en el vector de padres que el padre del siguiente es el actual
+        generados.push_back(siguiente);    // se agrega a generados
       }
     }
   }
