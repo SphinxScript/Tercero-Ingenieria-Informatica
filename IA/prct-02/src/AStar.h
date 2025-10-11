@@ -11,7 +11,7 @@ struct Nodo {
   Coordenada posicion; // Coordenada del nodo actual
   int coste; // Coste acumulado desde el nodo inicial
   int heuristica; // Coste estimado hasta el nodo objetivo
-  int total; // Suma de coste y heurística
+  int total; // Suma de coste y heurística -> f(n)
   Coordenada padre; // Coordenada del nodo padre
 };
 
@@ -30,6 +30,7 @@ class AStar {
   std::vector<Coordenada> camino_;
   std::vector<Nodo> nodos_abiertos_;
   std::vector<Nodo> nodos_cerrados_;
+  std::vector<std::pair<int, int>> movimientos{{-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
 };
 
 #endif

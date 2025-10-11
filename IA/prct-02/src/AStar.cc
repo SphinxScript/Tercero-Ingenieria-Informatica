@@ -1,6 +1,7 @@
 #include "AStar.h"
 #include <vector>
 #include <cstdlib>  // para std::abs
+#include <algorithm> // para buscar dentro del vector, reemplzar, etc
 
 AStar::AStar(Laberinto* laberinto) {
   laberinto_ = laberinto;
@@ -36,7 +37,25 @@ int CalculaCosteMovimiento (const Coordenada& desde, const Coordenada& hasta) {
 }
 
 bool AStar::BuscarCamino() {
+  bool camino_encontrado{false};
   while (!nodos_abiertos_.empty()) {
-  
+    auto it = std::min_element(nodos_abiertos_.begin(), nodos_abiertos_.end(), [](const Nodo& a, const Nodo& b) { return a.total < b.total; });
+    if (it != nodos_abiertos_.end()) {    // debería ser siempre cierto
+      Nodo nodo_actual = *it;
+      nodos_cerrados_.push_back(nodo_actual);
+      nodos_abiertos_.erase(it);
+      if (nodo_actual.posicion.fila == laberinto_->ObtenerFin().fila && nodo_actual.posicion.columna == laberinto_->ObtenerFin().columna) {
+        camino_encontrado = true;
+        break;
+      }
+      for (int i{0}; i < 8; ++i) {    // vamos a recorrer todos los vecinos del nodo actual (con su posición) en el vector movimientos (tamaño 8)
+        Coordenada coordenada_nodo_adyacente;
+        coordenada_nodo_adyacente.fila = nodo_actual.posicion.fila + movimientos[i].first;
+        coordenada_nodo_adyacente.columna = nodo_actual.posicion.columna + movimientos[i].second;
+        // realizamos comprobaciones básicas para saber antes de nada si es una posición valida
+        if ()
+      }
+    }
   }
+
 }

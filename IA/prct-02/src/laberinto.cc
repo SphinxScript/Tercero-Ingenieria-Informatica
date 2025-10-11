@@ -48,6 +48,17 @@ bool Laberinto::Cargar() {
   return true;
 }
 
+bool Laberinto::EsTransitable(int fila, int columna) const {
+  bool estransitable = true;
+  if (mapa_[fila][columna] == 1) {       // primero comprobamos que no sea ningún muro u obstáculo
+    estransitable = false;
+  }
+  else if (fila < 0 || fila >= filas_ || columna < 0 || columna >= columnas_) {                          // comprobamos si queda fuera del laberinto
+    estransitable = false;
+  }
+  return estransitable;
+}
+
 std::ostream& operator<<(std::ostream& os, const Laberinto& laberinto) {
   os << "Número de filas: " << laberinto.GetFilas() << std::endl;
   os << "Número de columnas: " << laberinto.GetColumnas() << std::endl;
