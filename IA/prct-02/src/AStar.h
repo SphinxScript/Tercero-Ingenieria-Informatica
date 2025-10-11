@@ -24,8 +24,8 @@ class AStar {
  private:
   int CalculaHeuristica(const Coordenada& coord_actual, const Coordenada& coord_final) const;
   int CalculaF(const Coordenada& coord_actual, const Coordenada& coord_final) const;
-  int CalculaG(const Coordenada& coord_actual, const Coordenada& coord_vecino) const;
   void ReconstruirCamino(const Coordenada& coord_final);
+  int CalculaCosteMovimiento(const Coordenada& desde, const Coordenada& hacia) const;
   Laberinto* laberinto_;
   std::vector<Coordenada> camino_;
   std::vector<Nodo> nodos_abiertos_;
