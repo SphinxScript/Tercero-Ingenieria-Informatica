@@ -4,11 +4,6 @@
 #include "laberinto.h"
 
 
-
-
-
-
-
 Laberinto::Laberinto(const std::string& nombre_fichero) {
   nombre_fichero_ = nombre_fichero;
 
@@ -50,10 +45,7 @@ bool Laberinto::Cargar() {
 
 bool Laberinto::EsTransitable(int fila, int columna) const {
   bool estransitable = true;
-  if (mapa_[fila][columna] == 1) {       // primero comprobamos que no sea ningún muro u obstáculo
-    estransitable = false;
-  }
-  else if (fila < 0 || fila >= filas_ || columna < 0 || columna >= columnas_) {                          // comprobamos si queda fuera del laberinto
+  if (mapa_[fila][columna] == 1) {       // comprobamos que no sea ningún muro u obstáculo (Aquí ya hemos comprobado que está dentro de los limites)
     estransitable = false;
   }
   return estransitable;
