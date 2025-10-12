@@ -17,8 +17,8 @@ class Laberinto {
   void Mostrar() const;
   void ActualizaObstáculos();
   bool EsTransitable(int fila, int columna) const;
-  Coordenada ObtenerInicio() const;
-  Coordenada ObtenerFin() const;
+  Coordenada ObtenerInicio() const { return inicio_; }
+  Coordenada ObtenerFin() const { return fin_; }
   int GetFilas() const { return filas_; }
   int GetColumnas() const { return columnas_; }
   const std::vector<std::vector<int>>& GetMapa() const { return mapa_; }

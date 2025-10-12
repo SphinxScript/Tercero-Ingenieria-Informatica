@@ -90,9 +90,9 @@ bool AStar::BuscarCamino() {
           nodos_en_abiertos_[coordenada_nodo_adyacente.fila][coordenada_nodo_adyacente.columna] = true; // marcamos en la matriz que está en abiertos
         }
         // Si el vecino ya está en abiertos, comparamos el coste que tiene y el coste desde el nodo actual, para ver si mejora. si mejora se actualiza.
-        if (nodos_en_abiertos_[coordenada_nodo_adyacente.fila][coordenada_nodo_adyacente.columna]) {
+        else {
           // buscamos el nodo en nodos_abiertos_ y lo ponemos como iterador
-          auto it2 = std::find_if(nodos_abiertos_.begin(), nodos_abiertos_.end(), [&coordenada_nodo_adyacente](const Nodo& n) { return n.posicion.fila == coordenada_nodo_adyacente.fila && n.posicion.columna == coordenada_nodo_adyacente.columna; });
+          auto it2 = std::find_if(nodos_abiertos_.begin(), nodos_abiertos_.end(), [&coordenada_nodo_adyacente](const Nodo& nodo) { return nodo.posicion.fila == coordenada_nodo_adyacente.fila && nodo.posicion.columna == coordenada_nodo_adyacente.columna; });
           if (it2 != nodos_abiertos_.end()) { // debería ser siempre cierto ya que hemos comprobado que está en abiertos
             if (coste_tentativo < it2->coste) { // si el coste tentativo es menor, actualizamos los valores del nodo en la lista de abiertos
               it2->coste = coste_tentativo;
@@ -112,7 +112,15 @@ bool AStar::BuscarCamino() {
 
 // este metodo calcula el camino e inserta en el vector<Coordenada> las coordenadas del camino
 void AStar::ReconstruirCamino(const Coordenada& coord_final) {
-
+  // El camino está almacenado en el vector nodos_cerrados_
+  // Iré buscando ahí, desde el nodo final, reconstruyendo el camino con su padre.
+  Coordenada coordenada_actual = meta_;
+  while (coordenada_actual.fila != -1 && coordenada_actual.columna != -1) { // establecimos que el nodo inicial tiene como padre las coordenadas -1,-1
+    camino_.push_back(coordenada_actual);
+    auto it = std::find_if(nodos_cerrados_.begin(), nodos_cerrados_.end(), [&coordenada_actual](const Nodo& nodo) { return nodo.posicion.fila == coordenada_actual.fila && nodo.posicion.columna == coordenada_actual.columna; });
+    // Ahora establecemos la coordenada actual al padre
+    coordenada_actual = it->padre;
+  }
 }
 
 

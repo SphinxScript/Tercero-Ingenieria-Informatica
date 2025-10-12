@@ -29,11 +29,11 @@ bool Laberinto::Cargar() {
   for (int i{0}; i < filas_; ++i) {
     for (int j{0}; j < columnas_; ++j) {
       fichero >> mapa_[i][j];
-      if (mapa_[i][j] == 2) {
+      if (mapa_[i][j] == 3) {     // si la posición es 3, es el inicio
         inicio_.fila = i;
         inicio_.columna = j;
       }
-      else if (mapa_[i][j] == 3) {
+      else if (mapa_[i][j] == 4) {    // si la posición es 4, es el fin
         fin_.fila = i;
         fin_.columna = j;
       }
@@ -54,12 +54,29 @@ bool Laberinto::EsTransitable(int fila, int columna) const {
 std::ostream& operator<<(std::ostream& os, const Laberinto& laberinto) {
   os << "Número de filas: " << laberinto.GetFilas() << std::endl;
   os << "Número de columnas: " << laberinto.GetColumnas() << std::endl;
-  os << "Mapa del laberinto:" << std::endl;
+  os << "Entrada en: [" << laberinto.ObtenerInicio().fila << ", " << laberinto.ObtenerInicio().columna << "]" << std::endl;
+  os << "Salida en: [" << laberinto.ObtenerFin().fila << ", " << laberinto.ObtenerFin().columna << "]" << std::endl;
+  os << "Mapa del laberinto:" << std::endl << std::endl;
   for (int i{0}; i < laberinto.GetFilas(); ++i) {
     for (int j{0}; j < laberinto.GetColumnas(); ++j) {
-      os << laberinto.GetMapa()[i][j] << " ";
+      switch (laberinto.GetMapa()[i][j]) {
+        case 1: // son muros, los pinto de blanco (por defecto)
+          os << laberinto.GetMapa()[i][j] << " ";
+          break;
+        case 8:
+          os << "\033[31m" << laberinto.GetMapa()[i][j] << "\033[0m ";
+          break;
+        case 3: // pinto de rojo sobre azul claro la entrada y salida
+        case 4:
+          os << "\033[31;104m" << laberinto.GetMapa()[i][j] << "\033[0m ";
+          break;
+        default:  // pintamos lo que está libre en color gris (destaca menos)
+          os << "\033[90m" << laberinto.GetMapa()[i][j] << "\033[0m ";
+          break;
+      }
     }
     os << std::endl;
   }
+  os << std::endl;
   return os;
 }
