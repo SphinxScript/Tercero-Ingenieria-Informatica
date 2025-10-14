@@ -1,5 +1,6 @@
 #include <iostream>
 #include "auxiliares.h"
+#include "laberinto.h"
 
 
 void ImprimeCamino(const AStar& recorrido, const Laberinto& laberinto, std::ostream& os) {
@@ -23,4 +24,15 @@ void ImprimeCamino(const AStar& recorrido, const Laberinto& laberinto, std::ostr
     }
     os << std::endl;
   }
+}
+
+void ModificarEntradaSalida (Laberinto& laberinto) {
+  std::cout << "Introduzca las nuevas coordenadas de entrada y salida en formato: \"fila, columna\"" << std::endl;
+  std::cout << "Tener en cuenta que el laberinto es de dimensión: (" << laberinto.GetFilas() << " x " << laberinto.GetColumnas() << ")" << std::endl;
+  int fila, columna;
+  std::cout << "Coordenadas de entrada (fila, columna): ";
+  std::cin >> fila;
+  std::cin.ignore(); // ignorar la coma
+  std::cin >> columna;
+  laberinto.ModificarEntradaSalida();
 }

@@ -18,7 +18,7 @@ struct Nodo {
 class AStar {
  public:
   AStar() = default;
-  AStar(Laberinto* laberinto);
+  AStar(const Laberinto* laberinto);
   bool BuscarCamino();
   const std::vector<Coordenada>& GetCamino() const { return camino_; }
  private:
@@ -26,7 +26,7 @@ class AStar {
   void ReconstruirCamino(const Coordenada& coord_final);
   int CalculaCosteMovimiento(const Coordenada& desde, const Coordenada& hacia) const;
   bool EnRango(int fila, int columna) const;
-  Laberinto* laberinto_;      // un puntero al laberinto que estamos resolviendo
+  const Laberinto* laberinto_;      // un puntero al laberinto que estamos resolviendo
   std::vector<Coordenada> camino_;    // vector donde guardaremos el camino desde el inicio al fin si lo encontramos
   std::vector<Nodo> nodos_abiertos_;  // nodos que están pendientes de explorar de tipo Nodo
   std::vector<Nodo> nodos_cerrados_;  // nodos que ya han sido explorados de tipo Nodo

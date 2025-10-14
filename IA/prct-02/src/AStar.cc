@@ -3,7 +3,7 @@
 #include <cstdlib>  // para std::abs
 #include <algorithm> // para buscar dentro del vector, reemplzar, etc
 
-AStar::AStar(Laberinto* laberinto) {
+AStar::AStar(const Laberinto* laberinto) {
   laberinto_ = laberinto;
   // Extraemos el nodo del que partimos para la heuristica y creamos un objeto Nodo:
   Coordenada coordenada_nodo = laberinto_->ObtenerInicio();

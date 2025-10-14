@@ -25,10 +25,15 @@ int main(int argc, char* argv[]) {
     MostrarAyuda(argv[0]);
     return 1;
   }
-  std::cout << "Para observar correctamente los ficheros de salida (porque están coloreados), visualizarlos en una terminal" << std::endl;
   const std::string fichero_entrada = argv[1];
   const std::string fichero_salida = argv[2];
   Laberinto laberinto{fichero_entrada};
+  std::cout << "Introduzca un 1 para modificar las casillas de entrada y salida del laberinto, cualquier otra letra para continuar: ";
+  char opcion;
+  std::cin >> opcion;
+  if (opcion == '1') {
+    ModificarEntradaSalida(laberinto);
+  }
   std::ofstream flujo_salida{fichero_salida};
   flujo_salida << "Información del laberinto: " << std::endl << laberinto << "Solución:" << std::endl;
   AStar recorrido_a_estrella{&laberinto};

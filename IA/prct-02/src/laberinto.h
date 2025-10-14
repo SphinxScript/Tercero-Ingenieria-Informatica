@@ -16,6 +16,7 @@ class Laberinto {
   bool Cargar();
   void Mostrar() const;
   void ActualizaObstáculos();
+  void ModificarEntradaSalida();
   bool EsTransitable(int fila, int columna) const;
   Coordenada ObtenerInicio() const { return inicio_; }
   Coordenada ObtenerFin() const { return fin_; }
@@ -23,6 +24,7 @@ class Laberinto {
   int GetColumnas() const { return columnas_; }
   const std::vector<std::vector<int>>& GetMapa() const { return mapa_; }
  private:
+  void ModificarEntradaSalida_private(const Coordenada& coordenada);
   std::string nombre_fichero_;
   std::vector<std::vector<int>> mapa_;
   Coordenada inicio_;
