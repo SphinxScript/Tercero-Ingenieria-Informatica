@@ -28,13 +28,14 @@ int main(int argc, char* argv[]) {
   const std::string fichero_entrada = argv[1];
   const std::string fichero_salida = argv[2];
   Laberinto laberinto{fichero_entrada};
+  std::ofstream flujo_salida{fichero_salida};
   std::cout << "Introduzca un 1 para modificar las casillas de entrada y salida del laberinto, cualquier otra letra para continuar: ";
   char opcion;
   std::cin >> opcion;
+  
   if (opcion == '1') {
-    ModificarEntradaSalida(laberinto);
+    ModificarEntradaSalida(laberinto, flujo_salida);
   }
-  std::ofstream flujo_salida{fichero_salida};
   flujo_salida << "Información del laberinto: " << std::endl << laberinto << "Solución:" << std::endl;
   AStar recorrido_a_estrella{&laberinto};
   recorrido_a_estrella.BuscarCamino();  // hacemos el recorrido A*

@@ -26,7 +26,7 @@ void ImprimeCamino(const AStar& recorrido, const Laberinto& laberinto, std::ostr
   }
 }
 
-void ModificarEntradaSalida (Laberinto& laberinto) {
+void ModificarEntradaSalida (Laberinto& laberinto, std::ostream& os) {
   std::cout << "Introduzca las nuevas coordenadas de entrada y salida en formato: \"fila, columna\"" << std::endl;
   std::cout << "Tener en cuenta que el laberinto es de dimensión: (" << laberinto.GetFilas() << " x " << laberinto.GetColumnas() << ")" << std::endl;
   int fila, columna;
@@ -34,5 +34,18 @@ void ModificarEntradaSalida (Laberinto& laberinto) {
   std::cin >> fila;
   std::cin.ignore(); // ignorar la coma
   std::cin >> columna;
-  laberinto.ModificarEntradaSalida();
+  if (!laberinto.ModificarEntradaSalida(fila, columna, 0)) {
+    std::cerr << "Coordenadas de entrada no válidas." << std::endl;
+    return;
+  }
+  std::cout << "Coordenadas de salida (fila, columna): ";
+  std::cin >> fila;
+  std::cin.ignore(); // ignorar la coma 
+  std::cin >> columna;
+  if (!laberinto.ModificarEntradaSalida(fila, columna, 1)) {
+    std::cerr << "Coordenadas de salida no válidas." << std::endl;
+    return;
+  }
+  os << "Laberinto actualizado:\n" << laberinto << std::endl;
+
 }

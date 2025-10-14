@@ -51,6 +51,33 @@ bool Laberinto::EsTransitable(int fila, int columna) const {
   return estransitable;
 }
 
+bool Laberinto::ModificarEntradaSalida(int fila, int columna, int selector) {
+  bool operacion = true;
+  if (fila >= this->GetFilas() || columna >= this->GetColumnas()) {
+    operacion = false;
+  }
+  else {
+    if (selector == 0) {    // Modificamos la entrada
+      // Primero establecemos como 0 la entrada anterior:
+      this->mapa_[this->inicio_.fila][this->inicio_.columna] = 0;
+      // Ahora colocamos el 3 en la nueva entrada
+      this->mapa_[fila][columna] = 3;
+      // ahora establecemos el valor de la entrada nueva.
+      this->inicio_ = Coordenada {fila, columna};
+    }
+    else {    // si vamos por aqui, es que es la salida
+      // Primero establecemos como 0 el final anterior:
+      this->mapa_[this->fin_.fila][this->fin_.columna] = 0;
+      // Ahora colocamos el 4 en la nueva salida
+      this->mapa_[fila][columna] = 4;
+      // ahora establecemos el valor de la salida nueva.
+      this->fin_ = Coordenada {fila, columna};
+    }
+  }
+  return operacion;
+}
+
+
 std::ostream& operator<<(std::ostream& os, const Laberinto& laberinto) {
   os << "Número de filas: " << laberinto.GetFilas() << std::endl;
   os << "Número de columnas: " << laberinto.GetColumnas() << std::endl;

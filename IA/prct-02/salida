@@ -1,16 +1,37 @@
-Información del laberinto: 
+Laberinto con las nuevas coordenadas de entrada y salida:
+Laberinto actualizado:
 Número de filas: 11
 Número de columnas: 10
-Entrada en: [4, 0]
-Salida en: [5, 9]
+Entrada en: [0, 9]
+Salida en: [0, 9]
 Mapa del laberinto:
 
-1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 4 
 1 0 0 1 0 0 0 0 0 1 
 1 0 0 1 0 0 0 0 0 1 
 1 0 0 1 0 0 1 0 0 1 
-3 0 0 1 1 1 1 0 0 1 
-1 0 0 0 0 0 0 0 0 4 
+0 0 0 1 1 1 1 0 0 1 
+1 0 0 0 0 0 0 0 0 0 
+1 0 0 0 0 0 0 0 0 1 
+1 0 0 1 1 1 1 0 0 1 
+1 0 0 1 0 0 0 0 0 1 
+1 0 0 1 0 0 0 0 0 1 
+1 1 1 1 1 1 1 1 1 1 
+
+
+Información del laberinto: 
+Número de filas: 11
+Número de columnas: 10
+Entrada en: [0, 9]
+Salida en: [0, 9]
+Mapa del laberinto:
+
+1 1 1 1 1 1 1 1 1 4 
+1 0 0 1 0 0 0 0 0 1 
+1 0 0 1 0 0 0 0 0 1 
+1 0 0 1 0 0 1 0 0 1 
+0 0 0 1 1 1 1 0 0 1 
+1 0 0 0 0 0 0 0 0 0 
 1 0 0 0 0 0 0 0 0 1 
 1 0 0 1 1 1 1 0 0 1 
 1 0 0 1 0 0 0 0 0 1 
@@ -18,12 +39,12 @@ Mapa del laberinto:
 1 1 1 1 1 1 1 1 1 1 
 
 Solución:
-1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 ■ 
 1 0 0 1 0 0 0 0 0 1 
 1 0 0 1 0 0 0 0 0 1 
 1 0 0 1 0 0 1 0 0 1 
-■ 0 0 1 1 1 1 0 0 1 
-1 ■ ■ ■ ■ ■ ■ ■ ■ ■ 
+0 0 0 1 1 1 1 0 0 1 
+1 0 0 0 0 0 0 0 0 0 
 1 0 0 0 0 0 0 0 0 1 
 1 0 0 1 1 1 1 0 0 1 
 1 0 0 1 0 0 0 0 0 1 
