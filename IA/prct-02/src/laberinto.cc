@@ -64,14 +64,14 @@ std::ostream& operator<<(std::ostream& os, const Laberinto& laberinto) {
           os << laberinto.GetMapa()[i][j] << " ";
           break;
         case 8:
-          os << "\033[31m" << laberinto.GetMapa()[i][j] << "\033[0m ";
+          os << laberinto.GetMapa()[i][j] << " ";
           break;
         case 3: // pinto de rojo sobre azul claro la entrada y salida
         case 4:
-          os << "\033[31;104m" << laberinto.GetMapa()[i][j] << "\033[0m ";
+          os << laberinto.GetMapa()[i][j] << " ";
           break;
         default:  // pintamos lo que está libre en color gris (destaca menos)
-          os << "\033[90m" << laberinto.GetMapa()[i][j] << "\033[0m ";
+          os << laberinto.GetMapa()[i][j] << " ";
           break;
       }
     }
