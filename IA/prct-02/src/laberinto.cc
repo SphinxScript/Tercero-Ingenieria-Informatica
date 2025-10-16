@@ -3,11 +3,16 @@
 #include <iostream>
 #include <random>   // para la generación del número aleatorio
 #include <algorithm> // para std::shuffle
+#include <chrono>   // para la semilla del generador de números aleatorios
 #include "laberinto.h"
 
 
 Laberinto::Laberinto(const std::string& nombre_fichero) {
   nombre_fichero_ = nombre_fichero;
+  const auto t = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+  std::seed_seq seq{ static_cast<uint32_t>(t), static_cast<uint32_t>(t >> 32), static_cast<uint32_t>(reinterpret_cast<uintptr_t>(this))};
+  rng_.seed(seq);
+
 
   bool cargado = Cargar();
   if (!cargado) {
@@ -56,7 +61,7 @@ bool Laberinto::EsTransitable(int fila, int columna) const {
 
 bool Laberinto::ModificarEntradaSalida(int fila, int columna, int selector) {
   bool operacion = true;
-  if (fila >= this->GetFilas() || columna >= this->GetColumnas()) {
+  if (fila < 0 || columna < 0 ||fila >= this->GetFilas() || columna >= this->GetColumnas()) {
     operacion = false;
   }
   else {

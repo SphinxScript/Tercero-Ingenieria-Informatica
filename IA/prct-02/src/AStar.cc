@@ -3,22 +3,7 @@
 #include <cstdlib>  // para std::abs
 #include <algorithm> // para buscar dentro del vector, reemplzar, etc
 
-AStar::AStar(const Laberinto* laberinto) {
-  laberinto_ = laberinto;
-  // Extraemos el nodo del que partimos para la heuristica y creamos un objeto Nodo:
-  Coordenada coordenada_nodo = laberinto_->ObtenerInicio();
-  meta_ = laberinto_->ObtenerFin();
-  Nodo nodo_inicio;
-  nodo_inicio.posicion = coordenada_nodo;
-  nodo_inicio.coste = 0; // porque es el nodo inicial
-  nodo_inicio.heuristica = CalculaHeuristica(coordenada_nodo, laberinto_->ObtenerFin());
-  nodo_inicio.total = nodo_inicio.coste + nodo_inicio.heuristica;
-  nodo_inicio.padre = {-1, -1}; // No tiene padre porque es el nodo inicial
-  nodos_en_cerrados_.resize(laberinto_->GetFilas(), std::vector<bool>(laberinto_->GetColumnas(), false));
-  nodos_en_abiertos_.resize(laberinto_->GetFilas(), std::vector<bool>(laberinto_->GetColumnas(), false));
-  nodos_en_abiertos_[coordenada_nodo.fila][coordenada_nodo.columna] = true; // Marcamos en la matriz que el nodo inicial está en abiertos
-  nodos_abiertos_.push_back(nodo_inicio); // Añadimos el nodo inicial a la lista de nodos abiertos
-}
+AStar::AStar(const Laberinto* laberinto) : laberinto_(laberinto) {}
 
 int AStar::CalculaHeuristica(const Coordenada& coord_actual, const Coordenada& coord_final) const {
   // Usamos la distancia Manhattan * 3 como heurística
@@ -41,7 +26,32 @@ int AStar::CalculaCosteMovimiento (const Coordenada& desde, const Coordenada& ha
 
 
 // Desarrollamos el bucle while para buscar el camino
-bool AStar::BuscarCamino() {
+bool AStar::BuscarCamino(const Coordenada& inicio) {
+  camino_.clear();
+  nodos_abiertos_.clear();
+  nodos_cerrados_.clear();
+
+  const int filas = laberinto_->GetFilas();
+  const int columnas = laberinto_->GetColumnas();
+  nodos_en_cerrados_.assign(filas, std::vector<bool>(columnas, false));
+  nodos_en_abiertos_.assign(filas, std::vector<bool>(columnas, false));
+  meta_ = laberinto_->ObtenerFin();
+
+  // Caso trivial donde estamos ya en la meta:
+  if (inicio.fila == meta_.fila && inicio.columna == meta_.columna) {
+    camino_.push_back(inicio);
+    return true;
+  }
+  // Inicializamos el nodo inicial y lo añadimos a la lista de nodos abiertos
+  Nodo nodo_inicial;
+  nodo_inicial.posicion = inicio;
+  nodo_inicial.coste = 0;
+  nodo_inicial.heuristica = CalculaHeuristica(inicio, meta_);
+  nodo_inicial.total = nodo_inicial.coste + nodo_inicial.heuristica;
+  nodo_inicial.padre = {-1, -1}; // el nodo inicial no tiene
+  nodos_abiertos_.push_back(nodo_inicial);
+  nodos_en_abiertos_[inicio.fila][inicio.columna] = true; // marcamos en la matriz que está en abiertos
+
   bool camino_encontrado{false};
   while (!nodos_abiertos_.empty()) {
     // Extraemos el nodo con menor coste total de la lista de nodos abiertos y luego lo marcamos en nodos_cerrados 
@@ -115,12 +125,18 @@ void AStar::ReconstruirCamino(const Coordenada& coord_final) {
   // El camino está almacenado en el vector nodos_cerrados_
   // Iré buscando ahí, desde el nodo final, reconstruyendo el camino con su padre.
   Coordenada coordenada_actual = meta_;
+  int contador = 0;   // Para poner el coste del camino (almacenado el total en el nodo final)
   while (coordenada_actual.fila != -1 && coordenada_actual.columna != -1) { // establecimos que el nodo inicial tiene como padre las coordenadas -1,-1
     camino_.push_back(coordenada_actual);
     auto it = std::find_if(nodos_cerrados_.begin(), nodos_cerrados_.end(), [&coordenada_actual](const Nodo& nodo) { return nodo.posicion.fila == coordenada_actual.fila && nodo.posicion.columna == coordenada_actual.columna; });
     // Ahora establecemos la coordenada actual al padre
     coordenada_actual = it->padre;
+    if (contador == 0) {
+      coste_ = it->coste; // el coste del camino es el coste del nodo final
+    }
+    contador++;
   }
+  std::reverse(camino_.begin(), camino_.end()); // dado que hemos ido del final al inicio, invertimos el vector para tener el camino en orden
 }
 
 
