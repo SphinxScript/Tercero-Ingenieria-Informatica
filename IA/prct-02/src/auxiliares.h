@@ -14,4 +14,11 @@ void ModificarEntradaSalida(Laberinto& laberinto, std::ostream& os);
 // imprime en cada iteración
 bool RecorridoDinamico(AStar& recorrido, Laberinto& laberinto, std::ostream& os);
 
+inline int PasoCoste(const Coordenada& actual, const Coordenada& siguiente) {
+  const bool orto = (actual.fila == siguiente.fila) ^ (actual.columna == siguiente.columna);
+  const bool diag = (actual.fila != siguiente.fila) && (actual.columna != siguiente.columna);
+  return orto ? 5 : (diag ? 7 : 0);
+}
+
+
 #endif

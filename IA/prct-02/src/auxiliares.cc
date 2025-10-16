@@ -35,8 +35,8 @@ void ImprimeCamino(const AStar& recorrido, const Laberinto& laberinto, std::ostr
     }
     os << '\n';
   }
+  os << std::endl;
 
-  os << "\nCoste del camino: " << recorrido.GetCoste() << std::endl;
 }
 
 void ModificarEntradaSalida (Laberinto& laberinto, std::ostream& os) {
@@ -69,6 +69,7 @@ bool RecorridoDinamico(AStar& recorrido, Laberinto& laberinto, std::ostream& os)
   std::vector<Coordenada> recorrido_real;   // vector donde almacenaremos el recorrido real para imprimir
   int reintentos = 0;
   bool encontrado = true;
+  int coste_acumulado = 0;
   while (true) {
     // planificamos el recorrido sobre el mapa congelado
     AStar a_star(&laberinto);
@@ -76,6 +77,7 @@ bool RecorridoDinamico(AStar& recorrido, Laberinto& laberinto, std::ostream& os)
       ++reintentos;
       if (reintentos > 5) {
         os << "Destino inalcanzable con 5 reorganizaciones de obstáculos" << std::endl;
+        os << "Coste acumulado hasta el momento: " << coste_acumulado << std::endl;
         encontrado = false;
         break;
       }
@@ -89,17 +91,20 @@ bool RecorridoDinamico(AStar& recorrido, Laberinto& laberinto, std::ostream& os)
     // Imprimimos el laberinto con el camino encontrado en el instante actual
     os << "Laberinto con el camino planificado:\n";
     ImprimeCamino(a_star, laberinto, os, recorrido_real);
+    os << "Coste acumulado hasta el momento: " << coste_acumulado << std::endl;
 
     // obtenemos el camino planificado
     const auto& camino = a_star.GetCamino();
     // comprobamos si hemos llegado al destino
     if (camino.size() <= 1) {
-      os << "Camino encontrado" << std::endl;
+      os << "Camino encontrado con coste total: " << coste_acumulado << std::endl;
       break;
     }
     // avanzamos una posición en el camino. dado que el camino está al revés, la posición es [1]
     // al seleccionar así, siempre cogemos el siguiente nodo del laberinto en nuestro camino
-    Coordenada siguiente_nodo = camino[1];    
+    Coordenada siguiente_nodo = camino[1];
+    const int coste_paso = PasoCoste(pos_actual, siguiente_nodo);
+    coste_acumulado += coste_paso;
     recorrido_real.push_back(siguiente_nodo);
     pos_actual = siguiente_nodo;
     // Actualizamos el laberinto (movemos obstáculos)

@@ -109,10 +109,10 @@ void Laberinto::ActualizaObstaculos(double pin, double pout) {
     }
   }
   // comprobamos si el porcentaje de obstáculos es menor del 25%
-  int max_obstaculos = (filas_ * columnas_) / 4;   // 25% del total de casillas. Entero porque la diferencia es pequeña
-  if (NumeroObstaculos() >= max_obstaculos) {    // En caso de que haya más del 25%, llamamos a EliminaObstaculosAzar
-    EliminaObstaculosAzar(NumeroObstaculos() - max_obstaculos);   // eliminamos el número de obstaculos de la diferencia con el 25%
-  }
+  // int max_obstaculos = (filas_ * columnas_) / 4;   // 25% del total de casillas. Entero porque la diferencia es pequeña
+  // if (NumeroObstaculos() >= max_obstaculos) {    // En caso de que haya más del 25%, llamamos a EliminaObstaculosAzar
+  //   EliminaObstaculosAzar(NumeroObstaculos() - max_obstaculos);   // eliminamos el número de obstaculos de la diferencia con el 25%
+  // }
 }
 
 // Esta función devuelve el número de obstáculos en el laberinto
