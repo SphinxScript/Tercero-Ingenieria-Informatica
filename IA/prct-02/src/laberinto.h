@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <random>
 
 struct Coordenada {
   int fila;
@@ -21,15 +22,23 @@ class Laberinto {
   Coordenada ObtenerFin() const { return fin_; }
   int GetFilas() const { return filas_; }
   int GetColumnas() const { return columnas_; }
+  void ActualizaObstaculos(double pin = 0.5, double pout = 0.5);
   const std::vector<std::vector<int>>& GetMapa() const { return mapa_; }
+
  private:
- // void ModificarEntradaSalida_private(const Coordenada& coordenada);
+  int NumeroObstaculos() const;
+
+  // opcode 0 -> elimina el número especificado, 1 -> elimina obstáculos al azar (por si no hay salida)
+  void EliminaObstaculosAzar(int a_liberar);    
   std::string nombre_fichero_;
   std::vector<std::vector<int>> mapa_;
   Coordenada inicio_;
   Coordenada fin_;
   int filas_;
   int columnas_;
+  // declaramos el motor para los números aleatorios para la actualización de obstáculos
+  std::mt19937 rng_;
+  std::uniform_real_distribution<double> uni01_{0.0, 1.0};
 };
 
 std::ostream& operator<<(std::ostream& os, const Laberinto& laberinto);

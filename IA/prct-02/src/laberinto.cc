@@ -1,6 +1,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <random>   // para la generación del número aleatorio
+#include <algorithm> // para std::shuffle
 #include "laberinto.h"
 
 
@@ -14,7 +16,8 @@ Laberinto::Laberinto(const std::string& nombre_fichero) {
     columnas_ = 0;
   }
 
-  
+  std::mt19937 rng(std::random_device{}());              // motor de generación de números aleatorios
+
 }
 
 
@@ -77,7 +80,63 @@ bool Laberinto::ModificarEntradaSalida(int fila, int columna, int selector) {
   return operacion;
 }
 
+void Laberinto::ActualizaObstaculos(double pin, double pout) {
+  for (int i{0}; i < filas_; ++i) {
+    for (int j{0}; j < columnas_; ++j) {
+      if (mapa_[i][j] == 3 || mapa_[i][j] == 4) {   // no modificamos la entrada ni la salida
+        continue;
+      }
+      if (mapa_[i][j] == 0) {  // si está libre
+        double probabilidad = uni01_(rng_); // generamos un número aleatorio entre 0 y 1
+        if (probabilidad < pin) {   // si el número es menor que pin, lo convertimos en obstáculo
+          mapa_[i][j] = 1;   // lo convertimos en obstáculo
+        }
+      }
+      else if (mapa_[i][j] == 1) { // si es un obstáculo
+        double probabilidad = uni01_(rng_); // generamos un número aleatorio entre 0 y 1
+        if (probabilidad < pout) {    // si el número es menor que pout, lo convertimos en libre
+          mapa_[i][j] = 0;   // lo convertimos en libre
+        }
+      }
+      else {
+        continue;   // si es cualquier otro valor, no lo modificamos
+      }
+    }
+  }
+  // comprobamos si el porcentaje de obstáculos es menor del 25%
+  int max_obstaculos = (filas_ * columnas_) / 4;   // 25% del total de casillas. Entero porque la diferencia es pequeña
+  if (NumeroObstaculos() >= max_obstaculos) {    // En caso de que haya más del 25%, llamamos a EliminaObstaculosAzar
+    EliminaObstaculosAzar(NumeroObstaculos() - max_obstaculos);   // eliminamos el número de obstaculos de la diferencia con el 25%
+  }
+}
 
+// Esta función devuelve el número de obstáculos en el laberinto
+int Laberinto::NumeroObstaculos() const {
+  int contador_obstaculos = 0;
+  for (int i{0}; i < filas_; ++i) {
+    for (int j{0}; j < columnas_; ++j) {
+      if (mapa_[i][j] == 1) {
+        contador_obstaculos++;
+      }
+    }
+  }
+  return contador_obstaculos;
+}
+
+void Laberinto::EliminaObstaculosAzar(int a_liberar) {
+  std::vector<Coordenada> obstáculos;
+  for (int i{0}; i < filas_; ++i) {
+    for (int j{0}; j < columnas_; ++j) {
+      if (mapa_[i][j] == 1) {
+        obstáculos.push_back(Coordenada{i, j});
+      }
+    }
+  }
+  std::shuffle(obstáculos.begin(), obstáculos.end(), rng_);
+  for (int k{0}; k < a_liberar && k < static_cast<int>(obstáculos.size()); ++k) {
+    mapa_[obstáculos[k].fila][obstáculos[k].columna] = 0; // Liberamos el obstáculo
+  }
+}
 std::ostream& operator<<(std::ostream& os, const Laberinto& laberinto) {
   os << "Número de filas: " << laberinto.GetFilas() << std::endl;
   os << "Número de columnas: " << laberinto.GetColumnas() << std::endl;

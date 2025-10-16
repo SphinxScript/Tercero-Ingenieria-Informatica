@@ -32,15 +32,16 @@ int main(int argc, char* argv[]) {
   std::cout << "Introduzca un 1 para modificar las casillas de entrada y salida del laberinto, cualquier otra letra para continuar: ";
   char opcion;
   std::cin >> opcion;
-  
+  laberinto.ActualizaObstaculos();
+  std::cout << laberinto << std::endl;
   if (opcion == '1') {
     ModificarEntradaSalida(laberinto, flujo_salida);
   }
-  flujo_salida << "Información del laberinto: " << std::endl << laberinto << "Solución:" << std::endl;
-  AStar recorrido_a_estrella{&laberinto};
-  recorrido_a_estrella.BuscarCamino();  // hacemos el recorrido A*
-  // Ahora llamamos a la función para imprimir el recorrido
-  ImprimeCamino(recorrido_a_estrella, laberinto, flujo_salida);
+  // flujo_salida << "Información del laberinto: " << std::endl << laberinto << "Solución:" << std::endl;
+  // AStar recorrido_a_estrella{&laberinto};
+  // recorrido_a_estrella.BuscarCamino();  // hacemos el recorrido A*
+  // // Ahora llamamos a la función para imprimir el recorrido
+  // ImprimeCamino(recorrido_a_estrella, laberinto, flujo_salida);
 
   return 0;
 }
