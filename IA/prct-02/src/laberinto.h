@@ -1,3 +1,11 @@
+/**
+ * @file laberinto.h
+ * @brief Fichero de cabecera para la clase Laberinto de la práctica
+ * 2 de IA. 3 año, Ingeniería Informática, Universidad de La Laguna
+ * @author Ricardo David Rodríguez Pane
+ * @date Octubre 2025
+ */
+
 #ifndef LABERINTO_H
 #define LABERINTO_H
 
@@ -5,11 +13,18 @@
 #include <string>
 #include <random>
 
+/**
+ * @brief Estructura que representa una coordenada en el laberinto
+ */
 struct Coordenada {
   int fila;
   int columna;
 };
 
+/**
+ * @class Laberinto
+ * @brief Clase que representa un laberinto y sus operaciones asociadas
+ */
 class Laberinto {
  public:
   Laberinto() = default;
@@ -41,6 +56,12 @@ class Laberinto {
   std::uniform_real_distribution<double> uni01_{0.0, 1.0};
 };
 
+/**
+ * @brief Sobrecarga del operador de salida para imprimir el laberinto
+ * @param os Flujo de salida
+ * @param laberinto Laberinto a imprimir
+ * @return Flujo de salida
+ */
 std::ostream& operator<<(std::ostream& os, const Laberinto& laberinto);
 
 #endif

@@ -118,7 +118,6 @@ void ModificarEntradaSalida (Laberinto& laberinto, std::ostream& os) {
  */
 bool RecorridoDinamico(AStar& recorrido, Laberinto& laberinto, std::ostream& os) {
   Coordenada pos_actual = laberinto.ObtenerInicio();  // Obtenemos la coordenada posición inicial para comenzar A*
-  const Coordenada destino = laberinto.ObtenerFin();  // Obtenemos la coordenada posición final para realizar A*
   std::vector<Coordenada> recorrido_real;             // vector donde almacenaremos el recorrido real para imprimir
   int reintentos = 0;                 // contador de reintentos al no encontrar camino
   bool encontrado = true;             // variable para indicar si se ha encontrado el camino o no
