@@ -1,12 +1,23 @@
+/**
+ * @file AStar.h
+ * @brief Definición de la clase AStar para la implementación del algoritmo A*.
+ * @author Ricardo David Rodríguez Pane
+ * @date Octubre 2025
+ */
+
 #ifndef ASTAR_H
 #define ASTAR_H
 
 #include <vector>
-//#include <queue>
 
 
 #include "laberinto.h"
 
+
+/**
+ * @struct Nodo
+ * @brief Estructura que representa un nodo en el algoritmo A*.
+ */
 struct Nodo {
   Coordenada posicion; // Coordenada del nodo actual
   int coste; // Coste acumulado desde el nodo inicial
@@ -15,6 +26,10 @@ struct Nodo {
   Coordenada padre; // Coordenada del nodo padre
 };
 
+/**
+ * @class AStar
+ * @brief Clase que implementa el algoritmo A* para encontrar el camino más corto en un laberinto.
+ */
 class AStar {
  public:
   AStar() = default;
@@ -36,6 +51,7 @@ class AStar {
   std::vector<std::vector<bool>> nodos_en_abiertos_; // matriz para marcar los nodos que están en abiertos
   Coordenada meta_;                                  // coordenada del nodo objetivo (la meta)
   int coste_;
+  
   // posibles movimientos (8 direcciones)
   std::vector<std::pair<int, int>> movimientos{{-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
 };
