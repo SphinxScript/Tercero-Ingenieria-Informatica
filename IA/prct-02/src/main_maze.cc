@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
   // mostramos el laberinto cargado antes de hacer ningún cambio, y mostramos información del mismo
   flujo_salida << "Información del laberinto: " << std::endl << laberinto << "Solución:" << std::endl;
   // creamos el objeto AStar con el laberinto cargado
-  AStar recorrido_a_estrella{&laberinto};
+  AStar recorrido_a_estrella{laberinto};
   // realizamos el recorrido dinámico con A* y comprobamos si ha sido exitoso
   if (!RecorridoDinamico(recorrido_a_estrella, laberinto, flujo_salida)) {
     flujo_salida << "No se ha encontrado un camino desde la entrada hasta la salida." << std::endl;

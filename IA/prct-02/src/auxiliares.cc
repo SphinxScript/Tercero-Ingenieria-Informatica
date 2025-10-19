@@ -124,7 +124,7 @@ bool RecorridoDinamico(AStar& recorrido, Laberinto& laberinto, std::ostream& os)
   int coste_acumulado = 0;            // coste acumulado del recorrido dinámico para ir imprimiendo
 
   while (true) {        // Bucle principal del recorrido dinámico
-    AStar a_star(&laberinto);                 // creamos un nuevo A* con el laberinto actualizado actual
+    AStar a_star(laberinto);                 // creamos un nuevo A* con el laberinto actualizado actual
     if (!a_star.BuscarCamino(pos_actual)) {   // en caso de no encontrar camino
       ++reintentos;                           // incrementamos el contador de reintentos
       if (reintentos > 5) {                   // si hemos superado los 5 reintentos, damos por inalcanzable la meta

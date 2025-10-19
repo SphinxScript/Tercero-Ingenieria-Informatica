@@ -14,7 +14,7 @@
  * @brief Constructor de la clase AStar.
  * @param laberinto Puntero al laberinto que se va a resolver.
  */
-AStar::AStar(const Laberinto* laberinto) : laberinto_(laberinto) {}
+AStar::AStar(const Laberinto& laberinto) : laberinto_(laberinto) {}
 
 /**
  * @brief Calcula la heurística (distancia estimada) entre dos coordenadas.
@@ -60,11 +60,11 @@ bool AStar::BuscarCamino(const Coordenada& inicio) {
   nodos_cerrados_.clear();
 
   // Obtenemos las filas, las columnas, la meta y preparamos las matrices de nodos en abiertos y cerrados
-  const int filas = laberinto_->GetFilas();
-  const int columnas = laberinto_->GetColumnas();
+  const int filas = laberinto_.GetFilas();
+  const int columnas = laberinto_.GetColumnas();
   nodos_en_cerrados_.assign(filas, std::vector<bool>(columnas, false));
   nodos_en_abiertos_.assign(filas, std::vector<bool>(columnas, false));
-  meta_ = laberinto_->ObtenerFin();
+  meta_ = laberinto_.ObtenerFin();
 
   // Caso trivial donde estamos ya en la meta:
   if (inicio.fila == meta_.fila && inicio.columna == meta_.columna) {
@@ -114,7 +114,7 @@ bool AStar::BuscarCamino(const Coordenada& inicio) {
           continue;
         }
         // si no es transitable, pasamos al siguiente movimiento
-        if (!laberinto_->EsTransitable(coordenada_nodo_adyacente.fila, coordenada_nodo_adyacente.columna)) {
+        if (!laberinto_.EsTransitable(coordenada_nodo_adyacente.fila, coordenada_nodo_adyacente.columna)) {
           continue;
         }
         // si el nodo adyacente ya está en cerrados, pasamos al siguiente movimiento
@@ -191,7 +191,7 @@ void AStar::ReconstruirCamino(const Coordenada& coord_final) {
  */
 bool AStar::EnRango(int fila, int columna) const {
   bool en_rango = true;
-  if (fila < 0 || fila >= laberinto_->GetFilas() || columna < 0 || columna >= laberinto_->GetColumnas()) {
+  if (fila < 0 || fila >= laberinto_.GetFilas() || columna < 0 || columna >= laberinto_.GetColumnas()) {
     en_rango = false;
   }
   return en_rango;
