@@ -37,8 +37,9 @@ class Laberinto {
   Coordenada ObtenerFin() const { return fin_; }
   int GetFilas() const { return filas_; }
   int GetColumnas() const { return columnas_; }
-  void ActualizaObstaculos(double pin = 0.5, double pout = 0.5);
+  void ActualizaObstaculos();
   const std::vector<std::vector<int>>& GetMapa() const { return mapa_; }
+  bool ActualizaProbabilidades(double pin, double pout);
 
  private:
   int NumeroObstaculos() const;
@@ -51,6 +52,8 @@ class Laberinto {
   Coordenada fin_;
   int filas_;
   int columnas_;
+  double pin_ = 0.5;
+  double pout_ = 0.5;
   // declaramos el motor para los números aleatorios para la actualización de obstáculos
   std::mt19937 rng_;
   std::uniform_real_distribution<double> uni01_{0.0, 1.0};

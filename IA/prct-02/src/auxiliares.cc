@@ -44,17 +44,6 @@ void ImprimeCamino(const AStar& recorrido, const Laberinto& laberinto, std::ostr
       mapa[coordenada.fila][coordenada.columna] = 8; // Marcamos el camino encontrado con un valor distinto (8)
     }
   }
-  /**
-   * Aquí imprimimos el mapa con las siguientes convenciones:
-   * - 0: casilla libre -> se imprime como "0 "
-   * - 1: obstáculo -> se imprime como "1 "
-   * - 3: entrada -> se imprime como "E "
-   * - 4: salida -> se imprime como "S "
-   * - 7: recorrido dinámico -> se imprime como "■ "
-   * - 8: recorrido planificado -> se imprime como ". "
-   * He dado prioridad al recorrido dinámico (es más visible) sobre el recorrido total planificado.
-   * De forma que se ve con un "■" la posición real del agente, y con "." el camino que tomaría en el A* de ese laberinto en ese instante
-   */
   for (size_t i = 0; i < mapa.size(); ++i) {
     for (size_t j = 0; j < mapa[i].size(); ++j) {
       const int v = mapa[i][j];
@@ -123,10 +112,10 @@ bool RecorridoDinamico(AStar& recorrido, Laberinto& laberinto, std::ostream& os)
   bool encontrado = true;             // variable para indicar si se ha encontrado el camino o no
   int coste_acumulado = 0;            // coste acumulado del recorrido dinámico para ir imprimiendo
 
-  while (true) {        // Bucle principal del recorrido dinámico
-    AStar a_star(laberinto);                 // creamos un nuevo A* con el laberinto actualizado actual
-    if (!a_star.BuscarCamino(pos_actual)) {   // en caso de no encontrar camino
-      ++reintentos;                           // incrementamos el contador de reintentos
+  while (true) {
+    AStar a_star(laberinto);
+    if (!a_star.BuscarCamino(pos_actual)) {
+      ++reintentos;
       if (reintentos > 5) {                   // si hemos superado los 5 reintentos, damos por inalcanzable la meta
         os << "Destino inalcanzable con 5 reorganizaciones de obstáculos" << std::endl;
         os << "Coste acumulado hasta el momento: " << coste_acumulado << std::endl;
@@ -134,30 +123,52 @@ bool RecorridoDinamico(AStar& recorrido, Laberinto& laberinto, std::ostream& os)
         break;
       }
 
-      laberinto.ActualizaObstaculos(0.5, 0.5);  // actualizamos obstáculos
-      continue;                                 // volvemos a intentar planificar el camino
+      laberinto.ActualizaObstaculos();  // actualizamos obstáculos
+      continue;
     }
-    reintentos = 0;                             // si hemos encontrado camino, reiniciamos los reintentos
+    reintentos = 0;
 
     // Imprimimos el laberinto con el camino encontrado en el instante actual y el recorrido que lleva el agente
     os << "Laberinto con el camino planificado:" << std::endl;
     ImprimeCamino(a_star, laberinto, os, recorrido_real);
     os << "Coste acumulado hasta el momento: " << coste_acumulado << std::endl;
 
-    const std::vector<Coordenada>& camino = a_star.GetCamino();    // obtenemos el camino planificado hasta el final
-    if (camino.size() <= 1) {                                      // si el tamaño del camino es 1 o menos, hemos llegado a la meta
+    const std::vector<Coordenada>& camino = a_star.GetCamino();    // obtenemos el camino planificado actual
+    if (camino.size() <= 1) {
       os << "¡Destino alcanzado!" << std::endl;
       break;
     }
     
-    Coordenada siguiente_nodo = camino[1];    // avanzamos una posición en el camino, que es la posición [1] del vector camino en cada
-                                              // iteración dado que éste se recalcula en cada iteración desde la posición actual del agente
-    const int coste_paso = PasoCoste(pos_actual, siguiente_nodo); // calculamos el coste del paso actual con la función auxiliar creada
-    coste_acumulado += coste_paso;                  // actualizamos el coste acumulado
-    recorrido_real.push_back(siguiente_nodo);       // añadimos la nueva posición al recorrido real
-    pos_actual = siguiente_nodo;                    // actualizamos la posición actual del agente
-    laberinto.ActualizaObstaculos(0.5, 0.5);        // Actualizamos el laberinto (movemos obstáculos)
+    Coordenada siguiente_nodo = camino[1];    // avanzamos una posición en el camino actual
+    const int coste_paso = PasoCoste(pos_actual, siguiente_nodo);
+    coste_acumulado += coste_paso;
+    recorrido_real.push_back(siguiente_nodo);
+    pos_actual = siguiente_nodo;
+    laberinto.ActualizaObstaculos();
     // Se repite todo el proceso
   }
   return encontrado;
+}
+
+/**
+ * @brief Función que permite modificar las probabilidades de aparición y desaparición de obstáculos en el laberinto
+ * @param laberinto Objeto Laberinto donde se modificarán las probabilidades
+ * @return true si se han modificado correctamente, false en caso contrario
+ */
+bool ModificaProbabilidades(Laberinto& laberinto) {
+  double pin, pout;
+  std::cout << "Introduzca la nueva probabilidad de aparición de obstáculos (pin) [0.0 - 1.0]: ";
+  std::cin >> pin;
+  if (pin < 0.0 || pin > 1.0) {
+    std::cerr << "Probabilidad introducida no válida." << std::endl;
+    return false;
+  }
+  std::cout << "Introduzca la nueva probabilidad de desaparición de obstáculos (pout) [0.0 - 1.0]: ";
+  std::cin >> pout;
+  if (pout < 0.0 || pout > 1.0) {
+    std::cerr << "Probabilidad introducida no válida." << std::endl;
+    return false;
+  }
+  bool exito = laberinto.ActualizaProbabilidades(pin, pout);
+  return exito;
 }
