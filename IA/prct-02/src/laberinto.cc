@@ -114,7 +114,7 @@ bool Laberinto::ModificarEntradaSalida(int fila, int columna, int selector) {
  * @param pin Probabilidad de que una celda libre se convierta en obstáculo
  * @param pout Probabilidad de que un obstáculo se convierta en celda libre
  */
-void Laberinto::ActualizaObstaculos(double pin, double pout) {
+void Laberinto::ActualizaObstaculos() {
   // recorremos todo el mapa del laberinto para actualizar los obstáculos
   for (int i{0}; i < filas_; ++i) {
     for (int j{0}; j < columnas_; ++j) {
@@ -125,14 +125,14 @@ void Laberinto::ActualizaObstaculos(double pin, double pout) {
       // si es libre, puede convertirse en obstáculo con probabilidad pin
       if (mapa_[i][j] == 0) {
         double probabilidad = uni01_(rng_); // generamos un número aleatorio entre 0 y 1
-        if (probabilidad < pin) {
+        if (probabilidad < pin_) {
           mapa_[i][j] = 1;
         }
       }
       // si es un obstáculo, puede convertirse en libre con probabilidad pout
       else if (mapa_[i][j] == 1) {
         double probabilidad = uni01_(rng_); // generamos un número aleatorio entre 0 y 1
-        if (probabilidad < pout) {
+        if (probabilidad < pout_) {
           mapa_[i][j] = 0;
         }
       }
@@ -187,6 +187,19 @@ void Laberinto::EliminaObstaculosAzar(int a_liberar) {
     mapa_[obstáculos[k].fila][obstáculos[k].columna] = 0; // Liberamos el obstáculo
   }
 }
+
+/**
+ * @brief Función que permite modificar las probabilidades de aparición y desaparición de obstáculos en el laberinto
+ * @param pin Probabilidad de aparición de obstáculos
+ * @param pout Probabilidad de desaparición de obstáculos
+ * @return true si se han modificado correctamente, false en caso contrario
+ */
+bool Laberinto::ActualizaProbabilidades(double pin, double pout) {
+  pin_ = pin;
+  pout_ = pout;
+  return true;
+}
+
 
 /**
  * @brief Sobrecarga del operador de salida para imprimir el laberinto

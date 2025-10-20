@@ -46,11 +46,11 @@ int main(int argc, char* argv[]) {
     MostrarAyuda(argv[0]);
     return 1;
   }
-  const std::string fichero_entrada = argv[1];    // nombre del fichero de entrada
-  const std::string fichero_salida = argv[2];     // nombre del fichero de salida
-  Laberinto laberinto{fichero_entrada};           // creamos el laberinto con el fichero de entrada
-  std::ofstream flujo_salida{fichero_salida};     // abrimos el fichero de salida
-  if (!flujo_salida) {                             // comprobamos que se ha abierto correctamente
+  const std::string fichero_entrada = argv[1];     // nombre del fichero de entrada
+  const std::string fichero_salida = argv[2];      // nombre del fichero de salida
+  Laberinto laberinto{fichero_entrada};            // creamos el laberinto con el fichero de entrada
+  std::ofstream flujo_salida{fichero_salida};
+  if (!flujo_salida) {
     std::cerr << "Error: no se pudo abrir el fichero de salida " << fichero_salida
               << " para escritura." << std::endl;
     return 1;
@@ -64,13 +64,30 @@ int main(int argc, char* argv[]) {
       return 0;
     }
   }
-  // mostramos el laberinto cargado antes de hacer ningún cambio, y mostramos información del mismo
+  std::cout << "Introduzca un 1 para modificar la probabilidad de que aparezca o desaparezca un obstáculo, cualquier otra letra para continuar: ";
+  std::cin >> opcion;
+  if (opcion == '1') {
+    bool exito = ModificaProbabilidades(laberinto);
+    if (!exito) {
+      std::cerr << "No se han podido modificar las probabilidades." << std::endl;
+      return 0;
+    }
+    std::cout << "Probabilidades modificadas correctamente." << std::endl;
+  }
   flujo_salida << "Información del laberinto: " << std::endl << laberinto << "Solución:" << std::endl;
-  // creamos el objeto AStar con el laberinto cargado
   AStar recorrido_a_estrella{laberinto};
-  // realizamos el recorrido dinámico con A* y comprobamos si ha sido exitoso
+  // para hacer recorrido dinamico con A*
   if (!RecorridoDinamico(recorrido_a_estrella, laberinto, flujo_salida)) {
     flujo_salida << "No se ha encontrado un camino desde la entrada hasta la salida." << std::endl;
   }
+  // para hacer el recorrido estático con A*
+  // if (!recorrido_a_estrella.BuscarCamino(laberinto.ObtenerInicio())) {
+  //   flujo_salida << "No se ha encontrado un camino desde la entrada hasta la salida." << std::endl;
+  // }
+  // else {
+  //   flujo_salida << "Laberinto con el camino planificado (estático):" << std::endl;
+  //   ImprimeCamino(recorrido_a_estrella, laberinto, flujo_salida);
+  //   flujo_salida << "Coste total del camino: " << recorrido_a_estrella.GetCoste() << std::endl;
+  // }
   return 0;
 }

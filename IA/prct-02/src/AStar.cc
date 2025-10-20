@@ -78,9 +78,6 @@ bool AStar::BuscarCamino(const Coordenada& inicio) {
   nodos_abiertos_.push_back(nodo_inicial);
   nodos_en_abiertos_[inicio.fila][inicio.columna] = true;
 
-  int nodos_generados{0};
-  int nodos_inspeeccionados{0};
-
   bool camino_encontrado{false};
   // Realizamos el bucle mientras haya nodos en abiertos.
   while (!nodos_abiertos_.empty()) {
@@ -98,7 +95,6 @@ bool AStar::BuscarCamino(const Coordenada& inicio) {
         ReconstruirCamino(meta_);
         break;
       }
-      ++nodos_inspeeccionados;
       // exploramos los nodos adyacentes (8 direcciones)
       for (int i{0}; i < 8; ++i) {
         Coordenada coordenada_nodo_adyacente;
@@ -113,8 +109,7 @@ bool AStar::BuscarCamino(const Coordenada& inicio) {
         if (nodos_en_cerrados_[coordenada_nodo_adyacente.fila][coordenada_nodo_adyacente.columna]) {
           continue;
         }
-        // llegados aquí, procedemos a calcular el coste de llegar a ese nodo adyacente (y tenemos un nodo generado)
-        ++nodos_generados;
+        // llegados aquí, procedemos a calcular el coste de llegar a ese nodo adyacente
         int coste_tentativo = nodo_actual.coste + CalculaCosteMovimiento(nodo_actual.posicion, coordenada_nodo_adyacente);
         // si el nodo adyacente no está en abiertos, lo añadimos
         if (!nodos_en_abiertos_[coordenada_nodo_adyacente.fila][coordenada_nodo_adyacente.columna]) {
@@ -145,8 +140,6 @@ bool AStar::BuscarCamino(const Coordenada& inicio) {
     }
   }
   // si salimos del while porque se vacía la lista, es porque no hay camino posible
-  std::cout << "Nodos generados: " << nodos_generados << std::endl;
-  std::cout << "Nodos inspeccionados: " << nodos_inspeeccionados << std::endl;
   return camino_encontrado;
 
 }

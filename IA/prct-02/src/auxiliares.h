@@ -30,11 +30,7 @@ void ImprimeCamino(const AStar& recorrido, const Laberinto& laberinto, std::ostr
  */
 bool ModificarEntradaSalida(Laberinto& laberinto, std::ostream& os);
 
-// Esta función externa se encarga de gestionar el recorrido dinámico
-// del laberinto, actualizando los obstáculos y recalculando el camino
-// en cada iteración. Devuelve true si se encuentra un camino hasta la meta,
-// o false si no es posible llegar a la meta.
-// imprime en cada iteración
+
 /**
  * @brief Función principal de la práctica. Realiza un recorrido dinámico con A* en un laberinto donde los obstáculos
  * se mueven en cada iteración. Nótese por iteración cada "paso" que da el agente en el laberinto. En cada paso, se realiza A* con
@@ -60,5 +56,11 @@ inline int PasoCoste(const Coordenada& actual, const Coordenada& siguiente) {
   return orto ? 5 : (diag ? 7 : 0);
 }
 
+/**
+ * @brief Función que permite modificar las probabilidades de aparición y desaparición de obstáculos en el laberinto
+ * @param laberinto Objeto Laberinto donde se modificarán las probabilidades
+ * @return true si se han modificado correctamente, false en caso contrario
+ */
+bool ModificaProbabilidades(Laberinto& laberinto);
 
 #endif
