@@ -81,7 +81,7 @@ void ImprimeCamino(const AStar& recorrido, const Laberinto& laberinto, std::ostr
  * @param os Stream de salida que se encarga de imprimir las instrucciones para el usuario
  * @return void
  */
-void ModificarEntradaSalida (Laberinto& laberinto, std::ostream& os) {
+bool ModificarEntradaSalida (Laberinto& laberinto, std::ostream& os) {
   std::cout << "Introduzca las nuevas coordenadas de entrada y salida en formato: \"fila columna\"" << std::endl;
   std::cout << "Tener en cuenta que el laberinto es de dimensión: (" << laberinto.GetFilas() << " x " << laberinto.GetColumnas() << ")" << std::endl;
   int fila, columna;
@@ -91,7 +91,7 @@ void ModificarEntradaSalida (Laberinto& laberinto, std::ostream& os) {
   // Comprobamos si se ha modificado correctamente la entrada
   if (!laberinto.ModificarEntradaSalida(fila, columna, 0)) {
     std::cerr << "Coordenadas de entrada no válidas." << std::endl;
-    return;
+    return false;
   }
   std::cout << "Coordenadas de salida (fila columna): ";
   std::cin >> fila;
@@ -99,10 +99,10 @@ void ModificarEntradaSalida (Laberinto& laberinto, std::ostream& os) {
   // Comprobamos si se ha modificado correctamente la salida
   if (!laberinto.ModificarEntradaSalida(fila, columna, 1)) {
     std::cerr << "Coordenadas de salida no válidas." << std::endl;
-    return;
+    return false;
   }
   os << "Laberinto actualizado:\n" << laberinto << std::endl;
-
+  return true;
 }
 
 /**

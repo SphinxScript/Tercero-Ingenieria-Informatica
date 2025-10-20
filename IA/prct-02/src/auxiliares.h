@@ -28,7 +28,7 @@ void ImprimeCamino(const AStar& recorrido, const Laberinto& laberinto, std::ostr
  * @param os Stream de salida que se encarga de imprimir las instrucciones para el usuario
  * @return void
  */
-void ModificarEntradaSalida(Laberinto& laberinto, std::ostream& os);
+bool ModificarEntradaSalida(Laberinto& laberinto, std::ostream& os);
 
 // Esta función externa se encarga de gestionar el recorrido dinámico
 // del laberinto, actualizando los obstáculos y recalculando el camino

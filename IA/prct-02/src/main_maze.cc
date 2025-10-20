@@ -59,7 +59,10 @@ int main(int argc, char* argv[]) {
   char opcion;
   std::cin >> opcion;
   if (opcion == '1') {
-    ModificarEntradaSalida(laberinto, flujo_salida);
+    bool exito = ModificarEntradaSalida(laberinto, flujo_salida);
+    if (!exito) {
+      return 0;
+    }
   }
   // mostramos el laberinto cargado antes de hacer ningún cambio, y mostramos información del mismo
   flujo_salida << "Información del laberinto: " << std::endl << laberinto << "Solución:" << std::endl;

@@ -37,8 +37,6 @@ Laberinto::Laberinto(const std::string& nombre_fichero) {
     columnas_ = 0;
   }
 
-  // Inicializamos el motor de generación de números aleatorios
-  std::mt19937 rng(std::random_device{}());
 }
 
 /**
@@ -56,16 +54,14 @@ bool Laberinto::Cargar() {
   // Redimensionamos el mapa del laberinto
   mapa_.resize(filas_, std::vector<int>(columnas_));
   // Leemos el mapa del laberinto desde el fichero
-  // localizamos entrada y salida mientras leemos el mapa
-  // y los inicializamos en inicio_ y fin_
   for (int i{0}; i < filas_; ++i) {
     for (int j{0}; j < columnas_; ++j) {
       fichero >> mapa_[i][j];
-      if (mapa_[i][j] == 3) {     // si la posición es 3, es el inicio
+      if (mapa_[i][j] == 3) {
         inicio_.fila = i;
         inicio_.columna = j;
       }
-      else if (mapa_[i][j] == 4) {    // si la posición es 4, es el fin
+      else if (mapa_[i][j] == 4) {
         fin_.fila = i;
         fin_.columna = j;
       }
@@ -98,19 +94,15 @@ bool Laberinto::ModificarEntradaSalida(int fila, int columna, int selector) {
   }
   else {
     if (selector == 0) {    // Modificamos la entrada
-      // Primero establecemos como 0 la entrada anterior:
+      // establecemos como 0 la entrada anterior:
       this->mapa_[this->inicio_.fila][this->inicio_.columna] = 0;
-      // Ahora colocamos el 3 en la nueva entrada
       this->mapa_[fila][columna] = 3;
-      // ahora establecemos el valor de la entrada nueva.
       this->inicio_ = Coordenada {fila, columna};
     }
-    else {    // si vamos por aqui, es que modificamos la salida
-      // Primero establecemos como 0 el final anterior:
+    // si vamos por aqui, es que modificamos la salida
+    else {
       this->mapa_[this->fin_.fila][this->fin_.columna] = 0;
-      // Ahora colocamos el 4 en la nueva salida
       this->mapa_[fila][columna] = 4;
-      // ahora establecemos el valor de la salida nueva.
       this->fin_ = Coordenada {fila, columna};
     }
   }
@@ -133,26 +125,26 @@ void Laberinto::ActualizaObstaculos(double pin, double pout) {
       // si es libre, puede convertirse en obstáculo con probabilidad pin
       if (mapa_[i][j] == 0) {
         double probabilidad = uni01_(rng_); // generamos un número aleatorio entre 0 y 1
-        if (probabilidad < pin) {   // si el número es menor que pin, lo convertimos en obstáculo
+        if (probabilidad < pin) {
           mapa_[i][j] = 1;
         }
       }
       // si es un obstáculo, puede convertirse en libre con probabilidad pout
       else if (mapa_[i][j] == 1) {
         double probabilidad = uni01_(rng_); // generamos un número aleatorio entre 0 y 1
-        if (probabilidad < pout) {          // si el número es menor que pout, lo convertimos en libre
+        if (probabilidad < pout) {
           mapa_[i][j] = 0;
         }
       }
       else {
-        continue;   // si es cualquier otro valor, no lo modificamos
+        continue;
       }
     }
   }
   // comprobamos si el porcentaje de obstáculos es menor del 25%
   int max_obstaculos = (filas_ * columnas_) * 0.25;   // 25% del total de casillas. Entero porque la diferencia es pequeña
-  if (NumeroObstaculos() >= max_obstaculos) {    // En caso de que haya más del 25%, llamamos a EliminaObstaculosAzar
-    EliminaObstaculosAzar(NumeroObstaculos() - max_obstaculos);   // eliminamos el número de obstaculos de la diferencia con el 25%
+  if (NumeroObstaculos() >= max_obstaculos) {         // En caso de que haya más del 25%, llamamos a EliminaObstaculosAzar
+    EliminaObstaculosAzar(NumeroObstaculos() - max_obstaculos);
   }
 }
 
@@ -190,7 +182,7 @@ void Laberinto::EliminaObstaculosAzar(int a_liberar) {
   }
   // Barajamos el vector de obstáculos
   std::shuffle(obstáculos.begin(), obstáculos.end(), rng_);
-  // Liberamos los primeros a_liberar obstáculos
+  // eliminamos los primeros a_liberar obstáculos
   for (int k{0}; k < a_liberar && k < static_cast<int>(obstáculos.size()); ++k) {
     mapa_[obstáculos[k].fila][obstáculos[k].columna] = 0; // Liberamos el obstáculo
   }
@@ -211,17 +203,17 @@ std::ostream& operator<<(std::ostream& os, const Laberinto& laberinto) {
   for (int i{0}; i < laberinto.GetFilas(); ++i) {
     for (int j{0}; j < laberinto.GetColumnas(); ++j) {
       switch (laberinto.GetMapa()[i][j]) {
-        case 1: // son muros, los pinto de blanco (por defecto)
+        case 1:
           os << laberinto.GetMapa()[i][j] << " ";
           break;
         case 8:
           os << laberinto.GetMapa()[i][j] << " ";
           break;
-        case 3: // pinto de rojo sobre azul claro la entrada y salida
+        case 3:
         case 4:
           os << laberinto.GetMapa()[i][j] << " ";
           break;
-        default:  // pintamos lo que está libre en color gris (destaca menos)
+        default:
           os << laberinto.GetMapa()[i][j] << " ";
           break;
       }
