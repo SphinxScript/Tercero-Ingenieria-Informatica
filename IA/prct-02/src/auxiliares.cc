@@ -114,6 +114,19 @@ bool RecorridoDinamico(AStar& recorrido, Laberinto& laberinto, std::ostream& os)
 
   while (true) {
     AStar a_star(laberinto);
+
+    // ahora hacemos 5 A* antes de avanzar una posicion del agente
+    os << "Los 5 A* hechos con la primera elección aleatoria: " << std::endl;
+    int contador_intentos = 0;
+    while (contador_intentos < 5) {
+      a_star.BuscarCamino(pos_actual);
+      os << "Intento " << contador_intentos + 1 << " de 5:" << std::endl;
+      ImprimeCamino(a_star, laberinto, os);
+      ++contador_intentos;
+    }
+    os << "Ahora tenemos el A* con los obstáculos dinámicos: " << std::endl;
+    // Ahora comprobamos que se encuentre salida desde esta posción
+    // cambiando los obstáculos
     if (!a_star.BuscarCamino(pos_actual)) {
       ++reintentos;
       if (reintentos > 5) {                   // si hemos superado los 5 reintentos, damos por inalcanzable la meta

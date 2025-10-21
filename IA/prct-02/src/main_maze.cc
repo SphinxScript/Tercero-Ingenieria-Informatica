@@ -76,8 +76,19 @@ int main(int argc, char* argv[]) {
   }
   flujo_salida << "Información del laberinto: " << std::endl << laberinto << "Solución:" << std::endl;
   AStar recorrido_a_estrella{laberinto};
-  if (!RecorridoDinamico(recorrido_a_estrella, laberinto, flujo_salida)) {
+
+  // descomentamos este bloque para hacer A* NO dinámico
+  // if (!RecorridoDinamico(recorrido_a_estrella, laberinto, flujo_salida)) {
+  //   flujo_salida << "No se ha encontrado un camino desde la entrada hasta la salida." << std::endl;
+  // }
+
+  // descomentamos este bloque para hacer A* SI dinamico
+  if (!recorrido_a_estrella.BuscarCamino(laberinto.ObtenerInicio())) {
     flujo_salida << "No se ha encontrado un camino desde la entrada hasta la salida." << std::endl;
+  }
+  else {
+    flujo_salida << "Camino encontrado con coste " << recorrido_a_estrella.GetCoste() << ": " << std::endl;
+    ImprimeCamino(recorrido_a_estrella, laberinto, flujo_salida);
   }
   return 0;
 }
