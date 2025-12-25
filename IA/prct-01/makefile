@@ -13,9 +13,9 @@ CXX = g++
 CXXFLAGS = -std=c++17 -Wall
 
 SRC_DIR = src
-TARGET  = ejecutable.out
+TARGET  = busqueda.out
 
-# Archivos fuente
+# Archivos fuente  (todo lo terminado en .cc en el directorio src)
 SOURCES = $(wildcard $(SRC_DIR)/*.cc)
 
 # Regla por defecto
@@ -24,10 +24,6 @@ all: $(TARGET)
 # Compilar y enlazar en un paso
 $(TARGET): $(SOURCES)
 	$(CXX) $(CXXFLAGS) -o $@ $^
-
-# Ejecutar el programa con un fichero de data
-run: $(TARGET)
-	./$(TARGET) data/entrada.txt
 
 # Limpiar
 clean:
