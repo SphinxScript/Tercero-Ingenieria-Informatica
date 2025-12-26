@@ -15,17 +15,19 @@
 int main(int argc, char* argv[]) {
   system("clear");
   // comprobamos argumentos pasados al programa
-  for (int i{1}; i < argc; ++i) {
-    if (std::string(argv[i]) == "--h" || std::string(argv[i]) == "--help") {
-      ShowHelp();
-      return 2;
-    }
-    else continue;
-  }
-  // si se pasan más de 3 argumentos ignoramos el resto
-  if (argc < 3) {
+  if (CheckArgs(argc, argv)) {
+//    std::cout << "CheckARgs\n";
     ShowHelp();
     return 2;
   }
+  // si se pasan más de 3 argumentos ignoramos el resto
+  if (argc < 3) {
+//    std::cout << "argc < 3\n";
+    ShowHelp();
+    return 2;
+  }
+  std::string infile{argv[1]};
+  std::string oufile{argv[2]};
+
   return 0;
 }

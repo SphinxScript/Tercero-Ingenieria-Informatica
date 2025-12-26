@@ -10,5 +10,6 @@
 #define AUXILIARES_H
 
 void ShowHelp();
+bool CheckArgs(const int argc, char* const argv[]);
 
 #endif

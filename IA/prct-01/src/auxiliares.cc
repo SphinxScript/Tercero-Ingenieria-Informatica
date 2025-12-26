@@ -19,3 +19,15 @@ void ShowHelp() {
     << "  --help   Muestra esta ayuda\n"
     << "  -h       Muestra esta ayuda\n";
 }
+
+bool CheckArgs(const int argc, char* const argv[]) {
+  bool help = false;
+  for (int i{1}; i < argc; ++i) {
+    if (std::string(argv[i]) == "--h" || std::string(argv[i]) == "--help") {
+      help = true;
+      return help;
+    }
+    else continue;
+  }
+  return help;
+}
