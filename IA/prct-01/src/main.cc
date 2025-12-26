@@ -11,6 +11,7 @@
 #include <string>
 
 #include "auxiliares.h"
+#include "grafo.h"
 
 int main(int argc, char* argv[]) {
   system("clear");
@@ -28,6 +29,15 @@ int main(int argc, char* argv[]) {
   }
   std::string infile{argv[1]};
   std::string oufile{argv[2]};
+  std::ifstream flujo_entrada(infile);
+  if (!flujo_entrada.is_open()) {
+    std::cout << "No se puede abrir el fichero\n"
+              << "Asegúrese de haber escrito correctamente la dirección\n";
+    return 1;
+  }
+  Grafo grafo(flujo_entrada);
+  flujo_entrada.close();
+
 
   return 0;
 }
