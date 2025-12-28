@@ -11,12 +11,21 @@
 
 #include "grafo.h"
 
-
+/**
+ * @brief Constructor por defecto de la clase Grafo
+ * @param flujo_entrada flujo de entrada desde el que se construye el grafo
+ * @note llama a la función BuildGraph para construir el grafo
+ * @return -
+ */
 Grafo::Grafo(std::ifstream& flujo_entrada) {
   BuildGraph(flujo_entrada);
 }
 
-
+/**
+ * @brief Construye el grafo a partir del flujo de entrada
+ * @param flujo_entrada flujo de entrada desde el que se construye la matriz de adyacencia
+ * @return void
+ */
 void Grafo::BuildGraph(std::ifstream& flujo_entrada) {
   flujo_entrada >> n_vertices_;
   matr_adyac_.resize(n_vertices_, std::vector<double>(n_vertices_));
@@ -32,6 +41,13 @@ void Grafo::BuildGraph(std::ifstream& flujo_entrada) {
   }
 }
 
+/**
+ * @brief Realiza el recorrido en profundidad desde el nodo inicio al nodo fin
+ * @param inicio_fin par de enteros que representan el nodo de inicio y el nodo final
+ * @param padres vector de nodos que almacena el orden de visita
+ * @note llama a la función Dfs para realizar el recorrido
+ * @return true si se encuentra el nodo fin, false en caso contrario
+ */
 bool Grafo::RecorridoProfundidad(std::pair<int, int> inicio_fin, std::vector<Nodo>& padres) {
   int inicio = inicio_fin.first;
   int fin = inicio_fin.second;
@@ -40,6 +56,14 @@ bool Grafo::RecorridoProfundidad(std::pair<int, int> inicio_fin, std::vector<Nod
   return Dfs(inicio, fin, padres);
 }
 
+/**
+ * @brief Realiza el recorrido en profundidad desde el nodo inicio al nodo fin
+ * imprime durante las iteraciones los nodos generados e inspeccionados
+ * @param nodo_inicio nodo desde el que se inicia el recorrido
+ * @param arista_fin nodo que se quiere alcanzar
+ * @param padres vector de nodos que almacena el orden de visita
+ * @return true si se encuentra el nodo fin, false en caso contrario
+ */
 bool Grafo::Dfs(int nodo_inicio, int arista_fin, std::vector<Nodo>& padres) {
   bool encontrado = false;
   std::vector<bool> visitado;
@@ -80,7 +104,6 @@ bool Grafo::Dfs(int nodo_inicio, int arista_fin, std::vector<Nodo>& padres) {
         padres[i].coste_acumulado = padres[nodo_actual].coste_acumulado + padres[i].coste;
         pila_nodos.push(i);
         if (arista_fin == i) {
-    //          std::cout << "encontrado" 
           encontrado = true;
           break;
         }

@@ -13,8 +13,9 @@
 #include <string>
 #include <fstream>
 
-// struct para representar los nodos (en la búsqueda)
-// almacena nodo padre, nodo hijo y coste al nodo hijo
+/**
+ * @brief Estructura para almacenar la información de cada nodo
+ */
 struct Nodo{
   int id;
   int padre;
@@ -22,6 +23,9 @@ struct Nodo{
   double coste_acumulado;
 };
 
+/**
+ * @brief Clase para representar un grafo mediante una matriz de adyacencia
+ */
 class Grafo {
  public:
   Grafo();

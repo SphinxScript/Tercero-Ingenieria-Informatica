@@ -9,6 +9,10 @@
 #include <iostream>
 #include "auxiliares.h"
 
+/**
+ * @brief Muestra la ayuda del programa
+ * @return void
+ */
 void ShowHelp() {
   std::cout
     << "Modo de uso:\n"
@@ -20,6 +24,12 @@ void ShowHelp() {
     << "  -h       Muestra esta ayuda\n";
 }
 
+/**
+ * @brief Comprueba los argumentos pasados al programa
+ * @param argc número de argumentos
+ * @param argv vector de argumentos
+ * @return true si se ha pedido ayuda, false en caso contrario
+ */
 bool CheckArgs(const int argc, char* const argv[]) {
   bool help = false;
   for (int i{1}; i < argc; ++i) {
@@ -32,6 +42,11 @@ bool CheckArgs(const int argc, char* const argv[]) {
   return help;
 }
 
+/**
+ * @brief Maneja la entrada del usuario para los nodos inicial y final
+ * @param rango número máximo de nodos en el grafo
+ * @return par de enteros con el nodo inicial y el nodo final
+ */
 std::pair<int, int> HandleNode(int rango) {
   int nodo_inicio;
   while (nodo_inicio > rango || nodo_inicio < 1) {
@@ -55,11 +70,15 @@ std::pair<int, int> HandleNode(int rango) {
   return std::pair<int, int>(nodo_inicio, nodo_final);
 }
 
+/**
+ * @brief Imprime el camino desde el nodo inicial al nodo final del recorrido DFS
+ * @param padres vector de nodos que almacena el orden de visita
+ * @param nodo_final nodo final del camino
+ * @return void
+ */
 void PrintDfs(const std::vector<Nodo>& padres, int nodo_final) {
   std::vector<int> hijos;
   int v = nodo_final;
-  --v;
-  hijos.push_back(nodo_final + 1);
   while (v != -1) {
     hijos.push_back(v + 1);
     v = padres[v].padre;
