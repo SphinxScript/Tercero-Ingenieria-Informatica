@@ -9,7 +9,9 @@
 #ifndef AUXILIARES_H
 #define AUXILIARES_H
 
+#include "grafo.h"
 void ShowHelp();
 bool CheckArgs(const int argc, char* const argv[]);
-
+std::pair<int, int> HandleNode(int);
+void PrintDfs(const std::vector<Nodo>&, int);
 #endif

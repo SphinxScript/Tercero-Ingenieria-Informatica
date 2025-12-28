@@ -37,7 +37,12 @@ int main(int argc, char* argv[]) {
   }
   Grafo grafo(flujo_entrada);
   flujo_entrada.close();
-
-
+  std::pair<int, int> inicio_fin = HandleNode(grafo.GetVertices());
+  std::vector<Nodo> padres;
+  if (grafo.RecorridoProfundidad(inicio_fin, padres)) {
+    std::cout << "Camino Encontrado!!" << std::endl;
+    PrintDfs(padres, inicio_fin.second - 1);
+  }
+  else std::cout << "Camino no encontrado :(" << std::endl;
   return 0;
 }

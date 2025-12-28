@@ -16,26 +16,27 @@
 // struct para representar los nodos (en la búsqueda)
 // almacena nodo padre, nodo hijo y coste al nodo hijo
 struct Nodo{
-  Nodo* nodo_padre;
-  int nodo_hijo;
-  int coste_hijo;
-  int coste_acumulado;
+  int id;
+  int padre;
+  double coste;
+  double coste_acumulado;
 };
 
 class Grafo {
  public:
   Grafo();
   Grafo(std::ifstream&);
-  bool RecorridoProfundidad(int, int);
+  bool RecorridoProfundidad(std::pair<int, int>, std::vector<Nodo>&);
   auto GetMatrix() { return matr_adyac_; }
+  int GetVertices() { return n_vertices_; }
 
  private:
   // matriz para almacenar la adyacencia
   // indexado desde -1 (posición n en la matriz corresponde a la arista n + 1 del grafo, pero se trabaja siempre dentro con n)
   std::vector<std::vector<double>> matr_adyac_;
   void BuildGraph(std::ifstream&);
-  int n_aristas_;
-  bool dfs(int, int);
+  int n_vertices_;
+  bool Dfs(int, int, std::vector<Nodo>&);
 
 };
 
