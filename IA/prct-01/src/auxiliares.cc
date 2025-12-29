@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include "auxiliares.h"
+#include "grafo.h"
 
 /**
  * @brief Muestra la ayuda del programa
@@ -76,20 +77,27 @@ std::pair<int, int> HandleNode(int rango) {
  * @param nodo_final nodo final del camino
  * @return void
  */
-void PrintDfs(const std::vector<Nodo>& padres, int nodo_final) {
+void PrintDfs(const std::vector<Nodo>& padres, int nodo_final, std::ostream& os) {
   std::vector<int> hijos;
   int v = nodo_final;
   while (v != -1) {
     hijos.push_back(v + 1);
     v = padres[v].padre;
   }
-  for (int i{hijos.size() - 1}; i >= 0; --i) {
+  for (int i{static_cast<int>(hijos.size() - 1)}; i >= 0; --i) {
     if (i == 0) {
-      std::cout << hijos[i];
+      os << hijos[i];
       break;
     }
-    std::cout << hijos[i] << " -> ";
+    os << hijos[i] << " -> ";
   }
-  std::cout << "\nCoste: " << padres[nodo_final].coste_acumulado;
-  std::cout << std::endl;
+  os << "\nCoste: " << padres[nodo_final].coste_acumulado;
+  os << std::endl;
+}
+
+void PrintSummary(std::ostream& os, const Grafo& grafo, std::pair<int, int> inicio_fin) {
+  os << "Número de nodos del grafo: " << grafo.GetVertices() << std::endl;
+  os << "Número de aristas del grafo: " << grafo.GetAristas() << std::endl;
+  os << "Vértice origen: " << inicio_fin.first << std::endl;
+  os << "Vértice destino: " << inicio_fin.second << std::endl;
 }

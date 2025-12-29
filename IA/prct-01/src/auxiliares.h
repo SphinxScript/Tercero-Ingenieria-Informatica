@@ -13,5 +13,6 @@
 void ShowHelp();
 bool CheckArgs(const int argc, char* const argv[]);
 std::pair<int, int> HandleNode(int);
-void PrintDfs(const std::vector<Nodo>&, int);
+void PrintDfs(const std::vector<Nodo>&, int, std::ostream&);
+void PrintSummary(std::ostream&, const Grafo&, std::pair<int, int>);
 #endif
