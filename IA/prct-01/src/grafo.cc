@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <stack>
+#include <queue>
 
 #include "grafo.h"
 
@@ -29,6 +30,7 @@ Grafo::Grafo(std::ifstream& flujo_entrada) {
 void Grafo::BuildGraph(std::ifstream& flujo_entrada) {
   flujo_entrada >> n_vertices_;
   matr_adyac_.resize(n_vertices_, std::vector<double>(n_vertices_));
+  n_aristas_ = 0;
   for (int i{0}; i < n_vertices_; ++i) {
     for (int j{i + 1}; j < n_vertices_; ++j) {
       // la matriz en la posición i,j conecta ambos nodos con el peso en el fichero de entrada
@@ -37,6 +39,7 @@ void Grafo::BuildGraph(std::ifstream& flujo_entrada) {
       flujo_entrada >> coste;
       matr_adyac_[i][j] = coste;
       matr_adyac_[j][i] = coste;
+      ++n_aristas_;
     }
   }
 }
@@ -48,12 +51,12 @@ void Grafo::BuildGraph(std::ifstream& flujo_entrada) {
  * @note llama a la función Dfs para realizar el recorrido
  * @return true si se encuentra el nodo fin, false en caso contrario
  */
-bool Grafo::RecorridoProfundidad(std::pair<int, int> inicio_fin, std::vector<Nodo>& padres) {
+bool Grafo::RecorridoProfundidad(std::pair<int, int> inicio_fin, std::vector<Nodo>& padres, std::ostream& os) {
   int inicio = inicio_fin.first;
   int fin = inicio_fin.second;
   --inicio;
   --fin;
-  return Dfs(inicio, fin, padres);
+  return Dfs(inicio, fin, padres, os);
 }
 
 /**
@@ -64,7 +67,9 @@ bool Grafo::RecorridoProfundidad(std::pair<int, int> inicio_fin, std::vector<Nod
  * @param padres vector de nodos que almacena el orden de visita
  * @return true si se encuentra el nodo fin, false en caso contrario
  */
-bool Grafo::Dfs(int nodo_inicio, int arista_fin, std::vector<Nodo>& padres) {
+bool Grafo::Dfs(int nodo_inicio, int arista_fin, std::vector<Nodo>& padres, std::ostream& os) {
+  os << "-------------------------------------------------------------------------------" << std::endl;
+  os << "Recorrido en Profundidad" << std::endl;
   bool encontrado = false;
   std::vector<bool> visitado;
   visitado.resize(n_vertices_, false);
@@ -88,13 +93,17 @@ bool Grafo::Dfs(int nodo_inicio, int arista_fin, std::vector<Nodo>& padres) {
   while (!pila_nodos.empty() && !encontrado) {
     int nodo_actual = pila_nodos.top();
     pila_nodos.pop();
-    std::cout << std::endl << "-------------------------------------------------------------------------------" << std::endl;
-    std::cout << "Iteración " << contador << std::endl;
-    std::cout << "Generados: ";
-    for (auto& generado : generados) {
-      std::cout << generado + 1 << ", ";
+    if (nodo_actual == arista_fin) {
+      encontrado = true;
+      break;
     }
-    std::cout << std::endl;
+    os << std::endl << "-------------------------------------------------------------------------------" << std::endl;
+    os << "Iteración " << contador << std::endl;
+    os << "Generados: ";
+    for (auto& generado : generados) {
+      os << generado + 1 << ", ";
+    }
+    os << std::endl;
     for (int i{0}; i < n_vertices_; ++i) {
       if (!visitado[i] && matr_adyac_[nodo_actual][i] != -1) {
         generados.push_back(i);
@@ -103,20 +112,98 @@ bool Grafo::Dfs(int nodo_inicio, int arista_fin, std::vector<Nodo>& padres) {
         padres[i].coste = matr_adyac_[nodo_actual][i];
         padres[i].coste_acumulado = padres[nodo_actual].coste_acumulado + padres[i].coste;
         pila_nodos.push(i);
-        if (arista_fin == i) {
-          encontrado = true;
-          break;
-        }
       }
     }
-    std::cout << "Inspeccionados: ";
+    os << "Inspeccionados: ";
     for (auto& inspeccionado : inspeccionados) {
-      std::cout << inspeccionado + 1 << ", ";
+      os << inspeccionado + 1 << ", ";
     }
     inspeccionados.push_back(nodo_actual);
-    std::cout << std::endl;
+    os << std::endl;
     ++contador;
   }
-  std::cout << "-------------------------------------------------------------------------------" << std::endl;
+  os << "-------------------------------------------------------------------------------" << std::endl;
+  return encontrado;
+}
+
+/**
+ * @brief Realiza el recorrido en amplitud desde el nodo inicio al nodo fin
+ * @param inicio_fin par de enteros que representan el nodo de inicio y el nodo final
+ * @param padres vector de nodos que almacena el orden de visita
+ * @note llama a la función Bfs para realizar el recorrido
+ * @return true si se encuentra el nodo fin, false en caso contrario
+ */
+bool Grafo::RecorridoAmplitud(std::pair<int, int> inicio_fin, std::vector<Nodo>& padres, std::ostream& os) {
+  int nodo_inicio = inicio_fin.first;
+  int nodo_fin = inicio_fin.second;
+  --nodo_inicio;
+  --nodo_fin;
+  return Bfs(nodo_inicio, nodo_fin, padres, os);
+}
+
+/**
+ * @brief Realiza el recorrido en amplitud desde el nodo inicio al nodo fin
+ * imprime durante las iteraciones los nodos generados e inspeccionados
+ * @param vertice_inicio nodo desde el que se inicia el recorrido
+ * @param vertice_final nodo que se quiere alcanzar
+ * @param padres vector de nodos que almacena el orden de visita
+ * @return true si se encuentra el nodo fin, false en caso contrario
+ */
+bool Grafo::Bfs(int vertice_inicio, int vertice_final, std::vector<Nodo>& padres, std::ostream& os) {
+  os << "-------------------------------------------------------------------------------" << std::endl;
+  os << "Recorrido en Amplitud" << std::endl;
+  std::vector<bool> visitado;
+  visitado.resize(n_vertices_, false);
+  std::queue<int> cola_nodos;
+  visitado[vertice_inicio] = true;
+  cola_nodos.push(vertice_inicio);
+
+  bool encontrado = false;
+  padres.resize(n_vertices_);
+  for (int i{0}; i < n_vertices_; ++i)  {
+    padres[i].id = i;
+    padres[i].padre = -1;
+    padres[i].coste = 0;
+    padres[i].coste_acumulado = 0;
+  }
+  padres[vertice_inicio].coste = 0;
+  padres[vertice_inicio].coste_acumulado = 0;
+  padres[vertice_inicio].padre = -1;
+  int contador{1};
+  std::vector<int> generados;
+  std::vector<int> inspeccionados;
+  generados.push_back(vertice_inicio);
+  while(!cola_nodos.empty() && !encontrado) {
+    int nodo_actual = cola_nodos.front();
+    cola_nodos.pop();
+    if (nodo_actual == vertice_final) {
+      encontrado = true;
+      break;
+    }
+    os << std::endl << "-------------------------------------------------------------------------------" << std::endl;
+    os << "Iteración " << contador << std::endl;
+    os << "Nodos generados: ";
+    for (const auto& nodo : generados) {
+      os << nodo + 1 << ", ";
+    }
+    os << std::endl;
+    for (int i{0}; i < n_vertices_; ++i) {
+      if (!visitado[i] && matr_adyac_[nodo_actual][i] != -1) {
+        visitado[i] = true;
+        cola_nodos.push(i);
+        padres[i].padre = nodo_actual;
+        padres[i].coste = matr_adyac_[nodo_actual][i];
+        padres[i].coste_acumulado = padres[nodo_actual].coste_acumulado + padres[i].coste;
+        generados.push_back(i);
+      }
+    }
+    os << "Nodos inspeccionados: ";
+    for (const auto& nodo : inspeccionados) {
+      os << nodo + 1 << ", ";
+    }
+    os << std::endl;
+    inspeccionados.push_back(nodo_actual);
+    ++contador;
+  }
   return encontrado;
 }

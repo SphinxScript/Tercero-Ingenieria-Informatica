@@ -30,17 +30,20 @@ class Grafo {
  public:
   Grafo();
   Grafo(std::ifstream&);
-  bool RecorridoProfundidad(std::pair<int, int>, std::vector<Nodo>&);
-  auto GetMatrix() { return matr_adyac_; }
-  int GetVertices() { return n_vertices_; }
+  bool RecorridoProfundidad(std::pair<int, int>, std::vector<Nodo>&, std::ostream&);
+  bool RecorridoAmplitud(std::pair<int, int>, std::vector<Nodo>&, std::ostream&);
+  auto GetMatrix() const { return matr_adyac_; }
+  int GetVertices() const { return n_vertices_; }
+  int GetAristas() const { return n_aristas_; }
 
  private:
-  // matriz para almacenar la adyacencia
-  // indexado desde -1 (posición n en la matriz corresponde a la arista n + 1 del grafo, pero se trabaja siempre dentro con n)
   std::vector<std::vector<double>> matr_adyac_;
-  void BuildGraph(std::ifstream&);
   int n_vertices_;
-  bool Dfs(int, int, std::vector<Nodo>&);
+  int n_aristas_;
+
+  void BuildGraph(std::ifstream&);
+  bool Dfs(int, int, std::vector<Nodo>&, std::ostream&);
+  bool Bfs(int, int, std::vector<Nodo>&, std::ostream&);
 
 };
 
