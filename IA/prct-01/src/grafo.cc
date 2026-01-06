@@ -9,6 +9,8 @@
 #include <iostream>
 #include <stack>
 #include <queue>
+#include <random>
+#include <vector>
 
 #include "grafo.h"
 
@@ -56,7 +58,7 @@ bool Grafo::RecorridoProfundidad(std::pair<int, int> inicio_fin, std::vector<Nod
   int fin = inicio_fin.second;
   --inicio;
   --fin;
-  return Dfs(inicio, fin, padres, os);
+  return RecorridoAleatorio(inicio, fin, padres, os);
 }
 
 /**
@@ -205,5 +207,73 @@ bool Grafo::Bfs(int vertice_inicio, int vertice_final, std::vector<Nodo>& padres
     inspeccionados.push_back(nodo_actual);
     ++contador;
   }
+  return encontrado;
+}
+
+
+// DFS que extrae de los nodos aleatoriamente para el recorrido en profundidad
+bool Grafo::RecorridoAleatorio(int nodo_inicio, int arista_fin, std::vector<Nodo>& padres, std::ostream& os) {
+  os << "-------------------------------------------------------------------------------" << std::endl;
+  os << "Recorrido en Profundidad aleatorio: " << std::endl;
+
+  std::mt19937 generador(std::random_device{}());
+  bool encontrado = false;
+  std::vector<bool> visitado;
+  visitado.resize(n_vertices_, false);
+  std::vector<int> vector_nodos;
+  visitado[nodo_inicio] = true;
+  vector_nodos.push_back(nodo_inicio);
+  padres.resize(n_vertices_);
+  for (int i{0}; i < n_vertices_; ++i) {
+    padres[i].id = i;
+    padres[i].padre = -1;
+    padres[i].coste = 0;
+    padres[i].coste_acumulado = 0;
+  }
+  padres[nodo_inicio].coste = 0;
+  padres[nodo_inicio].coste_acumulado = 0;
+  padres[nodo_inicio].padre = -1;
+  int contador{1};
+  std::vector<int> generados;
+  std::vector<int> inspeccionados;
+  generados.push_back(nodo_inicio);
+  while (!vector_nodos.empty() && !encontrado) {
+    // escogemos un índice aleatorio del vector de nodos
+    std::uniform_int_distribution<int> dist(0, static_cast<int>(vector_nodos.size()) - 1);
+    int indice_aleatorio = dist(generador);
+    int nodo_actual = vector_nodos[indice_aleatorio];
+    // intercambiamos el nodo actual con el último y lo eliminamos para simular el pop
+    std::swap(vector_nodos[indice_aleatorio], vector_nodos.back());
+    vector_nodos.pop_back();
+    if (nodo_actual == arista_fin) {
+      encontrado = true;
+      break;
+    }
+    os << std::endl << "-------------------------------------------------------------------------------" << std::endl;
+    os << "Iteración " << contador << std::endl;
+    os << "Generados: ";
+    for (auto& generado : generados) {
+      os << generado + 1 << ", ";
+    }
+    os << std::endl;
+    for (int i{0}; i < n_vertices_; ++i) {
+      if (!visitado[i] && matr_adyac_[nodo_actual][i] != -1) {
+        generados.push_back(i);
+        visitado[i] = true;
+        padres[i].padre = nodo_actual;
+        padres[i].coste = matr_adyac_[nodo_actual][i];
+        padres[i].coste_acumulado = padres[nodo_actual].coste_acumulado + padres[i].coste;
+        vector_nodos.push_back(i);
+      }
+    }
+    os << "Inspeccionados: ";
+    for (auto& inspeccionado : inspeccionados) {
+      os << inspeccionado + 1 << ", ";
+    }
+    inspeccionados.push_back(nodo_actual);
+    os << std::endl;
+    ++contador;
+  }
+  os << "-------------------------------------------------------------------------------" << std::endl;
   return encontrado;
 }
