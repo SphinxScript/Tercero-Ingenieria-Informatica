@@ -46,7 +46,8 @@ class Grafo {
   bool Bfs(int, int, std::vector<Nodo>&, std::ostream&);
 
   bool RecorridoAleatorio(int, int, std::vector<Nodo>&, std::ostream&);
-
+  bool FronteraAleatoria(int, int, std::vector<Nodo>&, std::ostream&);
+  bool MejorPeor(int, int, std::vector<Nodo>&, std::ostream&);
 };
 
 #endif

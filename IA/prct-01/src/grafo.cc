@@ -140,7 +140,7 @@ bool Grafo::RecorridoAmplitud(std::pair<int, int> inicio_fin, std::vector<Nodo>&
   int nodo_fin = inicio_fin.second;
   --nodo_inicio;
   --nodo_fin;
-  return Bfs(nodo_inicio, nodo_fin, padres, os);
+  return FronteraAleatoria(nodo_inicio, nodo_fin, padres, os);
 }
 
 /**
@@ -276,4 +276,137 @@ bool Grafo::RecorridoAleatorio(int nodo_inicio, int arista_fin, std::vector<Nodo
   }
   os << "-------------------------------------------------------------------------------" << std::endl;
   return encontrado;
+}
+
+
+// en lugar de extraer el siguiente nodo de la cola, se elige entre los 3 mejores nodos de la frontera (los que tienen menos coste)
+// se escoge de manera aleatoria entre esos 3 nodos
+// modificacion en el BFS
+
+bool Grafo::FronteraAleatoria(int vertice_inicio, int vertice_final, std::vector<Nodo>& padres, std::ostream& os) {
+  os << "-------------------------------------------------------------------------------\n";
+  os << "Recorrido en Amplitud con frontera aleatoria (top-2 por coste de arista)\n";
+
+  std::mt19937 gen(std::random_device{}());
+
+  // inicializar padres
+  padres.resize(n_vertices_);
+  for (int i = 0; i < n_vertices_; ++i) {
+    padres[i].id = i;
+    padres[i].padre = -1;
+    padres[i].coste = 0;
+    padres[i].coste_acumulado = 0;
+  }
+
+  if (vertice_inicio == vertice_final) return true;
+
+  std::vector<bool> visitado(n_vertices_, false);
+  visitado[vertice_inicio] = true;
+
+  // estructura de frontera
+  struct Candidato {
+    int nodo;
+    int padre;
+    double coste; // coste arista padre -> nodo
+  };
+
+  std::vector<Candidato> frontera;
+  frontera.reserve(n_vertices_);
+
+  std::vector<int> generados;
+  std::vector<int> inspeccionados;
+  generados.push_back(vertice_inicio);
+
+  // meter vecinos del inicio en la frontera
+  for (int i = 0; i < n_vertices_; ++i) {
+    if (!visitado[i] && matr_adyac_[vertice_inicio][i] != -1) {
+      visitado[i] = true;
+      frontera.push_back({i, vertice_inicio, matr_adyac_[vertice_inicio][i]});
+
+      padres[i].padre = vertice_inicio;
+      padres[i].coste = matr_adyac_[vertice_inicio][i];
+      padres[i].coste_acumulado = padres[vertice_inicio].coste_acumulado + padres[i].coste;
+
+      generados.push_back(i);
+    }
+  }
+
+  bool encontrado = false;
+  int contador = 1;
+
+  while (!frontera.empty() && !encontrado) {
+    os << "\n-------------------------------------------------------------------------------\n";
+    os << "Iteración " << contador << "\n";
+
+    os << "Nodos generados: ";
+    for (int n : generados) os << n + 1 << ", ";
+    os << "\n";
+
+    // buscar los 2 mejores candidatos en la frontera
+    int idx1 = -1, idx2 = -1;
+    double best1 = 1e9;
+    double best2 = 1e9;
+
+    for (int idx = 0; idx < static_cast<int>(frontera.size()); ++idx) {
+      double c = frontera[idx].coste;
+      if (c < best1) {
+        best2 = best1;
+        idx2 = idx1;
+
+        best1 = c;
+        idx1 = idx;
+      }
+      else if (c < best2) {
+        best2 = c;     idx2 = idx;
+      }
+    }
+
+    // elegir entre los 2 mejores si solo hay uno, se elgie ese
+    int idx_elegido = idx1;
+    if (idx2 != -1) {
+      std::uniform_int_distribution<int> dist(0, 1);
+      idx_elegido = (dist(gen) == 0) ? idx1 : idx2;
+    }
+
+    Candidato elegido = frontera[idx_elegido];
+    // quitar de frontera swap luego pop_back
+    std::swap(frontera[idx_elegido], frontera.back());
+    frontera.pop_back();
+
+    int nodo_actual = elegido.nodo;
+
+    inspeccionados.push_back(nodo_actual);
+
+    if (nodo_actual == vertice_final) {
+      encontrado = true;
+      break;
+    }
+
+    // expandimos el nodo actual meter sus vecinos en la frontera
+    for (int i = 0; i < n_vertices_; ++i) {
+      if (!visitado[i] && matr_adyac_[nodo_actual][i] != -1) {
+        visitado[i] = true;
+        frontera.push_back({i, nodo_actual, matr_adyac_[nodo_actual][i]});
+
+        padres[i].padre = nodo_actual;
+        padres[i].coste = matr_adyac_[nodo_actual][i];
+        padres[i].coste_acumulado = padres[nodo_actual].coste_acumulado + padres[i].coste;
+
+        generados.push_back(i);
+      }
+    }
+
+    os << "Nodos inspeccionados: ";
+    for (int n : inspeccionados) os << n + 1 << ", ";
+    os << "\n";
+
+    ++contador;
+  }
+
+  return encontrado;
+}
+
+
+bool MejorPeor(int, int, std::vector<Nodo>&, std::ostream&) {
+  
 }
